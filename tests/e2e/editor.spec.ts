@@ -79,7 +79,7 @@ test('offline editing and browser PDF artifact generation with actual physical p
     await expect(nodes(page)).toHaveCount(2);
     await context.setOffline(false);
     await expect(page.getByText('已儲存於此裝置', { exact: true })).toBeVisible();
-    const data = await page.evaluate(async () => { const modulePath = '/src/engine/print.ts'; const m = await import(modulePath) as typeof import('../../src/engine/print'); const b = JSON.parse(localStorage.getItem('openmind.recovery.v1')!).book; const plan = m.planPrint(b.sheets[0], { ...m.defaultPrint, mode: 'readable', landscape: false }); return { html: m.printHTML(plan), pages: plan.pages.length, width: plan.widthMM, height: plan.heightMM }; });
+    const data = await page.evaluate(async () => { const modulePath = '/src/engine/print.ts'; const m = await import(modulePath) as typeof import('../../src/engine/print'); const b = JSON.parse(localStorage.getItem('openmind.recovery.v1')!).book; const plan = m.planPrint(b.sheets[0], { ...m.defaultPrint, mode: 'readable', landscape: false }); return { html: await m.preparePrintHTML(plan), pages: plan.pages.length, width: plan.widthMM, height: plan.heightMM }; });
     const pdfPage = await context.newPage();
     await pdfPage.setContent(data.html);
     await pdfPage.evaluate(() => document.fonts.ready);

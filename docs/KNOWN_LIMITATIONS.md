@@ -1,4 +1,4 @@
-# Known limitations — 0.1
+# Known limitations — 0.2
 
 - This is a working initial development release, not full XMind parity or a production-certified release. See the complete matrix for outstanding work.
 - Five layout choices; brace/fishbone/matrix/tree-table and mixed per-branch layouts are not implemented. Timeline is an ordered hierarchy without a date scale.
@@ -8,7 +8,8 @@
 - Native save uses temp file + fsync + rename. The first save after opening/restarting or switching documents asks for a destination, deliberately preventing accidental overwrite of a rejected import or another document. OS permission/full-disk failures need broader platform fault injection.
 - Multi-select supports batch style/delete/copy. Drag moves one branch at a time. No marquee or smart guides. Pointer pan/zoom and keyboard navigation available; complete screen-reader/mobile/touch audit pending. Application shell targets desktop widths ≥820px.
 - No .xmind/.mm or Office/TextBundle converters, AI inference, sharing server, live collaboration, device sync, password encryption or telemetry. No inactive mock controls for these features.
-- Print reflow changes spatial structure; poster intentionally cuts with overlap; branch fit may still warn. The minimum-point setting applies to main topic text, not small metadata/footer. Notes are saved and searchable, but SVG/PDF show a note icon rather than the full note body. No PDF/A guarantee.
-- System font fallback and conservative text measurements are platform-dependent. macOS PDF QA is separate from Windows/Linux or physical-printer acceptance. Embedded CJK is Chromium Type3 glyph programs, not a bundled TTF.
+- Print reflow changes spatial structure; poster intentionally cuts with overlap. Main branches now auto-partition at the minimum topic size, with explicit reflow fallback for oversized paths/nodes; single fit and selected-subtree fit can still warn. The minimum-point setting applies to main topic text, not metadata/footer. Notes are saved and searchable, but SVG/PDF show an icon rather than the full note body. No PDF/A guarantee.
+- Noto Sans TC static 400/700 is bundled under OFL and embedded as Type0/TrueType in verified PDFs. Uncovered characters/emoji can still use system fonts; standalone SVG/PNG have not received the same font-embedding path. Conservative text measurement is not full font shaping. macOS PDF QA is separate from Windows/Linux or physical-printer acceptance.
+- Branch partitioning repeats ancestors as context, increasing page count. Greedy layout is not guaranteed to minimize paper use. Relation labels are fully retained in the index; endpoint node titles there are abbreviated while complete topic content remains in the referenced pages. Cross-page boundaries are drawn only when their entire range is on a page.
 - Host-native bundle is ad-hoc signed on macOS. No notarization, installer, auto-update, Windows/Linux release acceptance or mobile package. Packaging refuses to overwrite an existing output.
 - No open-source hosting/push was requested; source and local Git checkpoints remain on the user's machine. Apache-2.0 selected for permissive use, modification/distribution and explicit patent grant; no pre-existing license was replaced.

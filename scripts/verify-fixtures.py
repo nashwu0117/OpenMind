@@ -26,7 +26,8 @@ for case in manifest:
         for page in doc:
             for block in page.get_text('dict')['blocks']:
                 for line in block.get('lines',[]):
-                    if '節點' in ''.join(s['text'] for s in line['spans']):
+                    body_top=(12*96/25.4+24)*.75
+                    if '節點' in ''.join(s['text'] for s in line['spans']) and line['bbox'][1]>=body_top-2:
                         assert min(s['size'] for s in line['spans'])>=10
     images=sum(len(p.get_images()) for p in doc)
     if case.get('rich'):

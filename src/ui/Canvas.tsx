@@ -6,6 +6,7 @@ import type { Sheet } from '../core/model';
 type Props = {
     sheet: Sheet;
     focus: string;
+    expanded?: ReadonlySet<string>;
     selected: string[];
     onSelect: (ids: string[]) => void;
     onEdit: (id: string) => void;
@@ -31,7 +32,7 @@ export function Canvas(p: Props) {
         moving: boolean;
         pan: boolean;
     } | null>(null);
-    const scene = useMemo(() => layout(p.sheet, p.sheet.nodes[p.focus] ? p.focus : p.sheet.rootId), [p.sheet, p.focus]);
+    const scene = useMemo(() => layout(p.sheet, p.sheet.nodes[p.focus] ? p.focus : p.sheet.rootId, p.expanded ?? false), [p.sheet, p.focus, p.expanded]);
     p.sceneRef(scene);
     const fit = () => { const b = scene.bounds; const scale = Math.min(1.35, (size.width - 100) / b.width, (size.height - 100) / b.height); setView({ x: b.x - (size.width / scale - b.width) / 2, y: b.y - (size.height / scale - b.height) / 2, scale: Math.max(0.05, scale) }); };
     useEffect(() => { const r = new ResizeObserver(entries => { const { width, height } = entries[0].contentRect; setSize({ width, height }); }); if (host.current)

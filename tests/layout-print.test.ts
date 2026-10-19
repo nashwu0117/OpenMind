@@ -29,6 +29,9 @@ describe('shared vector layout', () => {
         s.nodes[s.rootId].collapsed = true;
         expect(layout(s).nodes).toHaveLength(1);
         expect(layout(s, s.rootId, true).nodes).toHaveLength(111);
+        const snapshot = JSON.stringify(s);
+        expect(layout(s, s.rootId, new Set([s.rootId])).nodes).toHaveLength(111);
+        expect(JSON.stringify(s)).toBe(snapshot);
     } });
     it('escapes hostile text in SVG and has no foreignObject/script', () => { const s = activeSheet(newWorkbook()); s.nodes[s.rootId].text = '<script>alert("x")</script> & 中文'; const svg = renderSVG(layout(s)); expect(svg).toContain('&lt;'); expect(svg).not.toContain('<script>'); expect(svg).not.toContain('foreignObject'); expect(wrapText('中文\nEnglish', 16, 50).join('')).toContain('中文'); });
 });

@@ -23,7 +23,7 @@ export type Scene = {
     bounds: Rect;
     sheet: Sheet;
 };
-export const FONT = '"PingFang TC", "Noto Sans CJK TC", "Microsoft JhengHei", system-ui, sans-serif';
+export const FONT = '"Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif';
 export function textWidth(text: string, size: number): number { return Array.from(text).reduce((sum, c) => sum + size * (/[\u2e80-\uffff]|\p{Extended_Pictographic}/u.test(c) ? 1.06 : /[MW@#%]/.test(c) ? 0.94 : /[il .,!:;'|]/.test(c) ? 0.38 : 0.67), 0); }
 export function wrapText(text: string, size: number, width: number): string[] { const out: string[] = []; for (const paragraph of text.split('\n')) {
     let line = '';
@@ -48,7 +48,7 @@ export function measure(node: Topic): {
 } { const f = node.style.fontSize; const max = 260; const lines = wrapText(node.text, f, max - 36); const width = Math.max(node.image ? 190 : 90, Math.min(max, Math.max(...lines.map(l => textWidth(l, f)), 50) + 36)); const meta = node.marker || node.labels.length || node.task || node.notes || node.link; return { width, height: Math.max(44, lines.length * f * 1.45 + 24) + (meta ? 23 : 0) + (node.image ? 112 : 0), lines }; }
 export function union(rects: Rect[], padding = 0): Rect { if (!rects.length)
     return { x: 0, y: 0, width: 1, height: 1 }; const x = Math.min(...rects.map(r => r.x)) - padding, y = Math.min(...rects.map(r => r.y)) - padding; return { x, y, width: Math.max(...rects.map(r => r.x + r.width)) - x + padding, height: Math.max(...rects.map(r => r.y + r.height)) - y + padding }; }
-export function layout(sheet: Sheet, focusId = sheet.rootId, expand = false): Scene {
+export function layout(sheet: Sheet, focusId = sheet.rootId, expand: boolean | ReadonlySet<string> = false): Scene {
     const nodes: PlacedNode[] = [], edges: Edge[] = [];
     const sizes = new Map<string, {
         width: number;
@@ -59,7 +59,7 @@ export function layout(sheet: Sheet, focusId = sheet.rootId, expand = false): Sc
         w: number;
         h: number;
     }>();
-    const children = (id: string) => !expand && sheet.nodes[id].collapsed ? [] : sheet.nodes[id].children;
+    const children = (id: string) => sheet.nodes[id].collapsed && expand !== true && (expand === false || !expand.has(id)) ? [] : sheet.nodes[id].children;
     const vertical = sheet.structure === 'org' || sheet.structure === 'timeline';
     const calc = (id: string): {
         w: number;

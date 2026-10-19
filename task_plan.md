@@ -31,4 +31,19 @@ Ship a runnable offline editor with safe native files, transactional history, SV
 - Python preview comparison needed Pillow in isolated QA venv; installed there, comparisons passed.
 
 ## Next Step
-Deliver the verified 0.1 editor/print slice and documented advanced-feature gaps. Next development priority: redistributable CJK fonts and page continuation/branch splitting.
+Hand off the verified 0.2 app and phase-2 report. Further parity work is a separate phase; physical-printer and cross-platform validation remain explicit limits.
+
+## Phase 2 — print clarity and focus (2026-10-20)
+Starting point: clean 5211d16f86c98d8ab7a4f8259591d2e2c6d3d8c1; backup/core-0.1-2026-10-20; feature/openmind-print-focus.
+
+Completion condition: legally bundled TC font used offline by preview and embedded in PDF; bidirectional page references for relationships across pages; main branches auto-split without reducing main text below minimum; expandable focused print preview with zoom/navigation and editor branch preview-to-focus. Preserve v1 documents and existing workflows. Update screenshots/PDF fixtures, pass regression/build/desktop checks, and document genuine limits.
+
+1. Research font provenance/OFL and inspect current print data flow — complete
+2. Font loading/embedding and searchable PDF acceptance — complete
+3. Branch-aware automatic pagination and page references — complete
+4. Expandable focused editor and print preview with zoom/navigation — complete
+5. Actual PDF/preview/desktop verification and handoff — complete
+
+User clarified: both editor and print preview. Both implemented and verified, including temporarily revealing collapsed descendants without changing recovery data.
+
+Phase-2 repairs: Jina 403 → official raw sources; variable Noto produced Type3 → static 400/700 verified Type0/TrueType; Vitest raw-CSS stub → real browser font checks; collapsed focus regression → view-only expansion; 1000-node native data-URL failure → private temporary HTML with cleanup. Final checks: 69 unit tests, 16 E2E, strict build/package, packaged native workflows, 183-page fixture corpus, 15-page relation PDF and 135-page 1000-node branch PDF. Detailed evidence: docs/PHASE2_VERIFICATION.md.

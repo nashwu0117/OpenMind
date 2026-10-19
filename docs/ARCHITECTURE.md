@@ -10,11 +10,17 @@ React 19 + strict TypeScript + Vite, SVG vector scene, Electron 44 desktop shell
 | src/engine/layout.ts | Deterministic measurement/wrapping, branch layout and global bounds |
 | src/engine/svg.ts | Escaped vector scene shared by canvas/SVG/PNG/print |
 | src/engine/print.ts | Physical units, pagination, readability, page scenes and HTML |
+| src/engine/pagination.ts | Connected main-branch partitioning and explicit readable reflow |
+| src/engine/pageReferences.ts | Topic-to-page ownership, bidirectional relation/continuation hints and complete index |
+| src/engine/fontEmbedding.ts | Lazy local static Noto subsets, Unicode coverage and one-time PDF HTML embedding |
 | src/io/formats.ts | Native, Markdown and OPML trust boundaries and conversion warnings |
 | src/ui | Editor interaction, inspector, outliner, workspace and print studio |
+| src/ui/PrintPreview.tsx / BranchPreview.tsx | Zoomable focused print preview and branch preview-to-focus flow |
 | electron | Sandboxed isolated renderer, bounded native dialogs, atomic file replacement, PDF |
 
 Editor state: workbook + selected IDs + viewport + active tool. Only document edits enter undo history. One text edit commits on blur/confirmation rather than each keystroke. Selection is reconciled after undo/delete/sheet changes. Layout is derived; viewport is never serialized into exports.
+
+Focused editing temporarily expands selected descendants through view-only IDs; both canvas and outliner honor that override. Leaving focus restores the persisted fold state. Native print preparation loads mode-0600 HTML from a private temporary directory, avoiding data-URL size limits, and disposes its files/window after output or failure.
 
 Security: no remote renderer, nodeIntegration disabled, contextIsolation + sandbox enabled. IPC only accepts bounded typed payloads; file paths come from native dialogs, not documents. Images restricted to embedded raster data. XML/HTML content escaped, OPML doctype rejected, links restricted to http/https/mailto/openmind. New windows/navigation denied. No telemetry.
 

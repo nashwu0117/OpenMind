@@ -3,7 +3,8 @@ import {cp,readFile,writeFile,mkdir,rename,access} from 'node:fs/promises';
 import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 const root=process.cwd(),platform=process.platform,arch=process.arch;
-const base=path.join(root,'release',`${platform}-${arch}`);
+const pkg=JSON.parse(await readFile(path.join(root,'package.json'),'utf8'));
+const base=path.join(root,'release',pkg.version,`${platform}-${arch}`);
 const target=path.join(base,platform==='darwin'?'OpenMind.app':'OpenMind');
 try{await access(target);throw new Error(`輸出已存在：${target}。請先自行移到備份位置，腳本不會覆寫既有套件。`);}catch(e){if(e.code!=='ENOENT')throw e;}
 await mkdir(base,{recursive:true});
@@ -12,7 +13,6 @@ await cp(platform==='darwin'?path.join(runtime,'Electron.app'):runtime,target,{r
 const resources=path.join(target,platform==='darwin'?'Contents/Resources':'resources');
 const appPath=path.join(resources,'app');await mkdir(appPath,{recursive:true});
 for(const name of ['dist','electron','LICENSE','THIRD_PARTY_NOTICES.md'])await cp(path.join(root,name),path.join(appPath,name),{recursive:true});
-const pkg=JSON.parse(await readFile(path.join(root,'package.json'),'utf8'));
 await writeFile(path.join(appPath,'package.json'),JSON.stringify({name:pkg.name,version:pkg.version,description:pkg.description,license:pkg.license,main:pkg.main}));
 if(platform==='darwin'){
  const plistPath=path.join(target,'Contents/Info.plist');let plist=await readFile(plistPath,'utf8');

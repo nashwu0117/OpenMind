@@ -15,6 +15,7 @@ for name,phrase in [('browser-cjk.pdf','離線繁體中文 PDF 驗收'),('deskto
     assert phrase in text, f'{name}: Traditional Chinese not searchable: {text!r}'
     fonts=page.get_fonts(full=True)
     assert fonts
+    assert any('NotoSansTC' in f[3] and f[2]=='Type0' and len(pdf.extract_font(f[0])[3])>1000 for f in fonts), fonts
     embedded=[]
     for f in fonts:
         if f[2]=='Type3':

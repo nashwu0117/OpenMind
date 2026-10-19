@@ -1,6 +1,6 @@
 {
   "name": "openmind",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Offline-first, print-first open-source mind mapping",
   "license": "Apache-2.0",
@@ -19,6 +19,7 @@
     "licenses": "node scripts/licenses.mjs"
   },
   "dependencies": {
+    "@fontsource/noto-sans-tc": "5.3.1",
     "lucide-react": "^0.468.0",
     "react": "19.3.1",
     "react-dom": "19.3.1"
