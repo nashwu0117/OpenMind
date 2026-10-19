@@ -1,0 +1,11 @@
+import {chromium,expect} from '@playwright/test';
+import {writeFile} from 'node:fs/promises';
+const browser=await chromium.launch({headless:true});
+try{
+ const page=await browser.newPage({viewport:{width:1480,height:960}});await page.goto('http://127.0.0.1:5187');await page.waitForLoadState('networkidle');
+ const measurement=await page.evaluate(async()=>{const path='/src/core/model.ts',layoutPath='/src/engine/layout.ts';const m=await import(path),engine=await import(layoutPath);const b=m.fixture(1000),s=m.activeSheet(b);const times=[];for(let i=0;i<20;i++){const start=performance.now();engine.layout(s);times.push(performance.now()-start);}times.sort((a,b)=>a-b);return {book:JSON.stringify(b),layoutMedianMS:times[10],layoutP95MS:times[19]};});
+ const start=performance.now();await page.getByTestId('file-input').setInputFiles({name:'performance.openmind',mimeType:'application/json',buffer:Buffer.from(measurement.book)});await expect(page.getByTestId('canvas').locator('[data-node-id]')).toHaveCount(1000);const renderMS=performance.now()-start;
+ const overflow=await page.evaluate(()=>[...document.querySelectorAll('g[data-node-id]')].flatMap(g=>{const rect=[...g.querySelectorAll('rect')].at(-1).getBBox();return [...g.querySelectorAll('text')].filter(t=>{const b=t.getBBox();return b.x<rect.x-1||b.y<rect.y-1||b.x+b.width>rect.x+rect.width+1||b.y+b.height>rect.y+rect.height+1;}).map(t=>({text:t.textContent,id:g.getAttribute('data-node-id')}));}));expect(overflow).toEqual([]);
+ await page.getByLabel('搜尋心智圖',{exact:true}).fill('節點 999');await expect(page.locator('.search-results button')).toHaveCount(1);await page.locator('.search-results button').click();await expect(page.getByLabel('節點文字',{exact:true})).toContainText('節點 999');await page.getByRole('button',{name:'適應整張心智圖',exact:true}).click();await page.screenshot({path:'artifacts/1000-node-editor.png'});
+ const report={nodes:1000,layoutMedianMS:measurement.layoutMedianMS,layoutP95MS:measurement.layoutP95MS,importAndFirstRenderMS:renderMS,textOutsideTopicBoxes:overflow.length,searchLocated999:true};await writeFile('artifacts/performance.json',JSON.stringify(report,null,2));console.log(report);
+}finally{await browser.close();}

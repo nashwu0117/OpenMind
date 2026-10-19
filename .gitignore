@@ -6,3 +6,4 @@ playwright-report/
 artifacts/
 .DS_Store
 *.log
+*.tsbuildinfo

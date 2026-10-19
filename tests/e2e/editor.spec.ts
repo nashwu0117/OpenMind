@@ -1,0 +1,92 @@
+import { test, expect, type Page } from '@playwright/test';
+import { readFile, mkdir, writeFile } from 'node:fs/promises';
+const nodes = (p: Page) => p.getByTestId('canvas').locator('[data-node-id]');
+async function blank(p: Page) { await p.getByRole('button', { name: '新增心智圖', exact: true }).click(); await p.getByRole('button', { name: '空白心智圖' }).click(); await expect(nodes(p)).toHaveCount(1); await nodes(p).first().click(); }
+async function enterTopic(p: Page, key: string, text: string) { await p.keyboard.press(key); await p.getByRole('textbox', { name: '編輯主題文字', exact: true }).fill(text); await p.getByRole('button', { name: '完成編輯' }).click(); }
+test.beforeEach(async ({ page }) => { await page.goto('/'); await expect(nodes(page)).toHaveCount(17); });
+test('complete editing, hierarchy, style, history, save/open and recovery workflow', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('pageerror', e => errors.push(e.message));
+    await blank(page);
+    await enterTopic(page, 'Tab', '研究與探索');
+    await enterTopic(page, 'Tab', '繁體中文與 English\n第二行 <&>');
+    await enterTopic(page, 'Enter', '驗收與列印');
+    await expect(nodes(page)).toHaveCount(4);
+    await page.getByLabel('文字大小', { exact: true }).selectOption('20');
+    await page.getByRole('button', { name: '粗體', exact: true }).click();
+    expect(await page.getByRole('button', { name: '粗體', exact: true }).getAttribute('aria-pressed')).toBe('true');
+    await page.getByRole('button', { name: '復原', exact: true }).click();
+    await expect(page.getByRole('button', { name: '粗體', exact: true })).toHaveAttribute('aria-pressed', 'false');
+    await page.getByRole('button', { name: '重做', exact: true }).click();
+    await expect(page.getByRole('button', { name: '粗體', exact: true })).toHaveAttribute('aria-pressed', 'true');
+    await page.getByLabel('節點備註', { exact: true }).fill('私密資料僅儲存於此裝置');
+    await page.getByLabel('標籤', { exact: true }).click();
+    await page.getByLabel('標籤', { exact: true }).fill('研究, 待確認');
+    await page.getByLabel('任務狀態', { exact: true }).selectOption('doing');
+    await page.getByLabel('開始日期', { exact: true }).fill('2026-10-20');
+    await page.getByLabel('截止日期', { exact: true }).fill('2026-10-23');
+    const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: '儲存檔案', exact: true }).click()]);
+    const saved = JSON.parse(await readFile((await download.path())!, 'utf8'));
+    const savedSheet = saved.sheets[0];
+    expect(Object.keys(savedSheet.nodes)).toHaveLength(4);
+    expect(Object.values(savedSheet.nodes).some((n: unknown) => (n as {
+        text: string;
+    }).text.includes('第二行 <&>'))).toBe(true);
+    await page.getByTestId('file-input').setInputFiles({ name: 'roundtrip.openmind', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(saved)) });
+    await expect(nodes(page)).toHaveCount(4);
+    await expect(page.getByText('已儲存於此裝置', { exact: true })).toBeVisible();
+    await page.reload();
+    await expect(nodes(page)).toHaveCount(4);
+    const recovered = await page.evaluate(() => JSON.parse(localStorage.getItem('openmind.recovery.v1')!).book);
+    expect(recovered).toEqual(saved);
+    expect(errors).toEqual([]);
+});
+test('actual pointer drag reparents a branch and cycle rejection preserves data', async ({ page }) => { await blank(page); await enterTopic(page, 'Tab', '分支甲'); await page.keyboard.press('ArrowLeft'); await enterTopic(page, 'Tab', '分支乙'); const source = page.locator('[data-node-id]').filter({ hasText: '分支乙' }), target = page.locator('[data-node-id]').filter({ hasText: '分支甲' }); const a = (await source.boundingBox())!, b = (await target.boundingBox())!; await page.mouse.move(a.x + a.width / 2, a.y + a.height / 2); await page.mouse.down(); await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2, { steps: 16 }); await page.mouse.up(); await expect.poll(async () => page.evaluate(() => { const raw = localStorage.getItem('openmind.recovery.v1'); if (!raw)
+    return null; const s = JSON.parse(raw).book.sheets[0]; return Object.values(s.nodes).find((n: unknown) => (n as {
+    text: string;
+}).text === '分支甲') as {
+    children: string[];
+}; })).toMatchObject({ children: [expect.any(String)] }); await expect(nodes(page)).toHaveCount(3); const pa = (await target.boundingBox())!, pb = (await source.boundingBox())!; await page.mouse.move(pa.x + pa.width / 2, pa.y + pa.height / 2); await page.mouse.down(); await page.mouse.move(pb.x + pb.width / 2, pb.y + pb.height / 2, { steps: 12 }); await page.mouse.up(); await expect(page.getByRole('status')).toContainText('無法移動'); await expect(nodes(page)).toHaveCount(3); });
+test('copy/paste, multiple sheets, outliner and search share real data', async ({ page }) => { await nodes(page).filter({ hasText: '探索方向' }).click(); await page.keyboard.press('ControlOrMeta+c'); await page.keyboard.press('ControlOrMeta+v'); await expect(nodes(page)).toHaveCount(21); await page.getByRole('button', { name: '大綱', exact: true }).click(); const field = page.getByRole('textbox', { name: '大綱：探索方向', exact: true }).last(); await field.fill('新的探索方向'); await field.press('Enter'); await page.getByRole('button', { name: '心智圖', exact: true }).click(); await page.getByLabel('搜尋心智圖', { exact: true }).fill('新的探索'); await page.getByRole('button', { name: '新的探索方向', exact: true }).last().click(); await expect(page.getByLabel('節點文字', { exact: true })).toHaveValue('新的探索方向'); await page.getByRole('button', { name: '聚焦分支', exact: true }).click(); await expect(nodes(page)).toHaveCount(4); await page.getByRole('button', { name: /返回完整心智圖/ }).click(); await expect(nodes(page)).toHaveCount(21); await page.getByRole('button', { name: '新增工作表', exact: true }).click(); await expect(nodes(page)).toHaveCount(1); await page.getByRole('button', { name: '複製工作表', exact: true }).click(); await expect(page.locator('.sheet-item')).toHaveCount(3); });
+test('strict corrupt/unsupported imports leave the current map intact', async ({ page }) => { const before = await nodes(page).count(); await page.getByTestId('file-input').setInputFiles({ name: 'bad.openmind', mimeType: 'application/json', buffer: Buffer.from('{broken') }); await expect(page.getByRole('status')).toContainText(/JSON|Unexpected|Expected/); await expect(nodes(page)).toHaveCount(before); await page.getByTestId('file-input').setInputFiles({ name: 'unknown.xmind', mimeType: 'application/zip', buffer: Buffer.from('zip') }); await expect(page.getByRole('status')).toContainText('尚未支援'); await expect(nodes(page)).toHaveCount(before); });
+test('print studio updates actual pages, dimensions, readability and poster preview', async ({ page }) => { await page.getByRole('button', { name: '列印與 PDF', exact: true }).click(); const dialog = page.getByRole('dialog', { name: '列印工作室' }); await expect(dialog.getByTestId('print-page').locator('svg')).toBeVisible(); await page.getByRole('button', { name: /可讀分頁 重排階層/ }).click(); await page.getByLabel('列印方向', { exact: true }).selectOption('portrait'); await page.getByLabel('紙張尺寸', { exact: true }).selectOption('A3'); await expect(page.locator('.print-metrics')).toContainText('297 × 420'); await expect(page.locator('.print-metrics')).toContainText('10.5'); await page.getByRole('button', { name: /海報拼接 保留原圖/ }).click(); await expect(page.getByLabel('海報排列預覽')).toBeVisible(); await page.getByRole('button', { name: '返回編輯', exact: true }).click(); await expect(nodes(page)).toHaveCount(17); });
+test('real SVG/PNG exports, OPML/Markdown roundtrip and honest lossy warning', async ({ page }) => {
+    page.on('dialog', d => d.accept());
+    await page.getByRole('button', { name: /匯出/ }).click();
+    const [svg] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: /^SVG/ }).click()]);
+    const svgText = await readFile((await svg.path())!, 'utf8');
+    expect(svgText).toContain('我的下一個好想法');
+    expect(svgText).not.toContain('foreignObject');
+    await page.getByRole('button', { name: /匯出/ }).click();
+    const [png] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: /^PNG/ }).click()]);
+    expect((await readFile((await png.path())!)).subarray(1, 4).toString()).toBe('PNG');
+    for (const format of ['opml', 'md']) {
+        await page.getByRole('button', { name: /匯出/ }).click();
+        const [file] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: new RegExp(`^${format.toUpperCase()}`) }).click()]);
+        await page.getByTestId('file-input').setInputFiles({ name: `map.${format}`, mimeType: 'text/plain', buffer: await readFile((await file.path())!) });
+        await expect(nodes(page)).toHaveCount(17);
+        await expect(page.getByRole('status')).toContainText('只轉換');
+    }
+});
+test('read-only mode disables mutations and escape cancels text fields', async ({ page }) => { const label = page.getByLabel('節點文字', { exact: true }); const old = await label.inputValue(); await label.fill('這次不要儲存'); await label.press('Escape'); await expect(label).toHaveValue(old); await page.getByLabel('唯讀模式', { exact: true }).check(); await expect(page.getByRole('button', { name: '子主題', exact: true })).toBeDisabled(); await expect(label).toBeDisabled(); await nodes(page).first().dblclick(); await expect(page.getByRole('dialog', { name: '編輯主題', exact: true })).not.toBeVisible(); });
+test('multi-selection styles, batch delete, cut/paste and floating topics are reversible', async ({ page }) => { const first = nodes(page).filter({ hasText: '探索方向' }), second = nodes(page).filter({ hasText: '整理想法' }); await first.click(); await second.click({ modifiers: ['Shift'] }); await page.getByRole('button', { name: '填滿 #fff6e6', exact: true }).click(); await expect(first.locator('rect').last()).toHaveAttribute('fill', '#fff6e6'); await expect(second.locator('rect').last()).toHaveAttribute('fill', '#fff6e6'); await page.getByRole('button', { name: '刪除節點', exact: true }).click(); await expect(nodes(page)).toHaveCount(9); await page.getByRole('button', { name: '復原', exact: true }).click(); await expect(nodes(page)).toHaveCount(17); await nodes(page).filter({ hasText: '探索方向' }).click(); await page.keyboard.press('ControlOrMeta+x'); await expect(nodes(page)).toHaveCount(13); await page.keyboard.press('ControlOrMeta+v'); await expect(nodes(page)).toHaveCount(17); await page.getByRole('button', { name: '自由主題', exact: true }).click(); await expect(nodes(page)).toHaveCount(18); await page.getByRole('button', { name: '適應整張心智圖', exact: true }).click(); await expect(nodes(page).filter({ hasText: '自由主題' })).toBeVisible(); });
+test('pan and cursor zoom preserve all document nodes and can recover the viewport', async ({ page }) => { const canvas = page.getByTestId('canvas'), before = await canvas.getAttribute('viewBox'); await page.mouse.move(600, 400); await page.mouse.wheel(120, 80); await expect(canvas).not.toHaveAttribute('viewBox', before!); await page.keyboard.down('ControlOrMeta'); await page.mouse.wheel(0, -150); await page.keyboard.up('ControlOrMeta'); await expect(nodes(page)).toHaveCount(17); await page.getByRole('button', { name: '適應整張心智圖', exact: true }).click(); await expect(nodes(page).filter({ hasText: '我的下一個好想法' })).toBeInViewport(); });
+test('offline editing and browser PDF artifact generation with actual physical pages', async ({ page, context }) => {
+    await page.waitForLoadState('networkidle');
+    await context.setOffline(true);
+    await blank(page);
+    await enterTopic(page, 'Tab', '離線繁體中文 PDF 驗收');
+    await expect(nodes(page)).toHaveCount(2);
+    await context.setOffline(false);
+    await expect(page.getByText('已儲存於此裝置', { exact: true })).toBeVisible();
+    const data = await page.evaluate(async () => { const modulePath = '/src/engine/print.ts'; const m = await import(modulePath) as typeof import('../../src/engine/print'); const b = JSON.parse(localStorage.getItem('openmind.recovery.v1')!).book; const plan = m.planPrint(b.sheets[0], { ...m.defaultPrint, mode: 'readable', landscape: false }); return { html: m.printHTML(plan), pages: plan.pages.length, width: plan.widthMM, height: plan.heightMM }; });
+    const pdfPage = await context.newPage();
+    await pdfPage.setContent(data.html);
+    await pdfPage.evaluate(() => document.fonts.ready);
+    await mkdir('artifacts', { recursive: true });
+    await pdfPage.pdf({ path: 'artifacts/browser-cjk.pdf', preferCSSPageSize: true, printBackground: true });
+    await writeFile('artifacts/browser-pdf-plan.json', JSON.stringify({ ...data, html: undefined }, null, 2));
+    await pdfPage.screenshot({ path: 'artifacts/print-page.png', fullPage: true });
+    await pdfPage.close();
+    await page.screenshot({ path: 'artifacts/editor.png', fullPage: true });
+});

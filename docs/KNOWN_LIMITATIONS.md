@@ -1,0 +1,14 @@
+# Known limitations — 0.1
+
+- This is a working initial development release, not full XMind parity or a production-certified release. See the complete matrix for outstanding work.
+- Five layout choices; brace/fishbone/matrix/tree-table and mixed per-branch layouts are not implemented. Timeline is an ordered hierarchy without a date scale.
+- Relationship labels and one-subtree boundaries work; summaries/callouts, custom connector direction/line-style controls and sibling-range boundaries need work. Cross-branch links are not duplicated when copying only one endpoint.
+- Unicode marker selection, notes/labels/links, raster images and simple task dates/status are implemented. Attachments, equations, audio, Gantt/dependency scheduling, presentation and personal templates are not implemented. Starter templates currently reuse the same editable branch scaffold.
+- Recent library: at most eight local documents. Browser/Electron localStorage is capacity-limited and clearable, so download .openmind backups. Recovery retains current/pending/previous data; it is not durable version history. Undo holds at most 80 transactions and resets on file open.
+- Native save uses temp file + fsync + rename. The first save after opening/restarting or switching documents asks for a destination, deliberately preventing accidental overwrite of a rejected import or another document. OS permission/full-disk failures need broader platform fault injection.
+- Multi-select supports batch style/delete/copy. Drag moves one branch at a time. No marquee or smart guides. Pointer pan/zoom and keyboard navigation available; complete screen-reader/mobile/touch audit pending. Application shell targets desktop widths ≥820px.
+- No .xmind/.mm or Office/TextBundle converters, AI inference, sharing server, live collaboration, device sync, password encryption or telemetry. No inactive mock controls for these features.
+- Print reflow changes spatial structure; poster intentionally cuts with overlap; branch fit may still warn. The minimum-point setting applies to main topic text, not small metadata/footer. Notes are saved and searchable, but SVG/PDF show a note icon rather than the full note body. No PDF/A guarantee.
+- System font fallback and conservative text measurements are platform-dependent. macOS PDF QA is separate from Windows/Linux or physical-printer acceptance. Embedded CJK is Chromium Type3 glyph programs, not a bundled TTF.
+- Host-native bundle is ad-hoc signed on macOS. No notarization, installer, auto-update, Windows/Linux release acceptance or mobile package. Packaging refuses to overwrite an existing output.
+- No open-source hosting/push was requested; source and local Git checkpoints remain on the user's machine. Apache-2.0 selected for permissive use, modification/distribution and explicit patent grant; no pre-existing license was replaced.
