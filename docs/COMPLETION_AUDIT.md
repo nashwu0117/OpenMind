@@ -66,3 +66,20 @@
 ## 判定
 
 本輪完成本機能力補齊、22組可靠性修正、50項矩陣及實際驗收。公開穩定版尚需實體列印、跨平台、完整輔助科技、正式簽署／公證等證據；進階格式、混合結構、完整日曆、AI及協作仍缺。見[限制](BUGS_AND_LIMITATIONS.md)、[復現命令](TEST_PLAN.md)與[發布準備](RELEASE_READINESS.md)。
+
+## 變更檔案
+
+相對起始HEAD共56個檔案，以下為完整清單；來源程式、測試與文件已提交，release/artifacts不提交。
+
+- 專案根目錄：`README.md`、`SECURITY.md`、`THIRD_PARTY_NOTICES.md`、`findings.md`、`package-lock.json`、`package.json`、`progress.md`、`task_plan.md`
+- docs：`docs/ARCHITECTURE.md`、`docs/BUGS_AND_LIMITATIONS.md`、`docs/COMPLETION_AUDIT.md`、`docs/FEATURE_PARITY_MATRIX.md`、`docs/FORMAT_COMPATIBILITY.md`、`docs/KNOWN_LIMITATIONS.md`、`docs/PRODUCT_SPEC.md`、`docs/RELEASE_READINESS.md`、`docs/ROADMAP.md`、`docs/TEST_PLAN.md`
+- electron：`electron/main.cjs`
+- scripts：`scripts/audit-release.mjs`、`scripts/licenses.mjs`、`scripts/verify-audit.py`
+- src/core：`src/core/commands.ts`、`src/core/library.ts`、`src/core/model.ts`、`src/core/storage.ts`、`src/core/tasks.ts`
+- src/engine：`src/engine/equations.ts`、`src/engine/layout.ts`、`src/engine/pageReferences.ts`、`src/engine/pagination.ts`、`src/engine/print.ts`、`src/engine/svg.ts`、`src/engine/viewPlans.ts`
+- src/io：`src/io/binary.ts`、`src/io/formats.ts`、`src/io/freemind.ts`、`src/io/printing.ts`、`src/io/visualExport.ts`
+- src/main.tsx：`src/main.tsx`
+- src/ui：`src/ui/AdvancedInspector.tsx`、`src/ui/App.tsx`、`src/ui/Canvas.tsx`、`src/ui/Fields.tsx`、`src/ui/Presentation.tsx`、`src/ui/PrintStudio.tsx`、`src/ui/TaskBoard.tsx`、`src/ui/parity.css`、`src/ui/useModalFocus.ts`
+- tests：`tests/audit-core.test.ts`、`tests/core.test.ts`、`tests/e2e/audit.spec.ts`、`tests/e2e/parity.spec.ts`、`tests/e2e/print-focus.spec.ts`、`tests/equations.test.ts`、`tests/parity.test.ts`
+
+本輪修正22組問題，另有15項功能限制／發布條件列在B01–B15；未解限制不計入已修正數。測試曾有環境缺runtime、測試定位同名控制項與焦點前提的失敗，均記錄與修正；最後101單元、34E2E沒有失敗、跳過或flaky。硬體／跨平台等未執行項目不算通過。
