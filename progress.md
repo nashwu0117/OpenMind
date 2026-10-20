@@ -1,5 +1,13 @@
 # Progress
 
+## Completion audit — 2026-10-20
+- Read the full new master prompt. Preserved clean 0.2 HEAD 425f887 in backup/print-focus-0.2-2026-10-20 and created feature/openmind-completion-audit.
+- Fresh baseline: 69 unit tests and strict build pass. All browser tests were prevented from launching by a missing Chromium headless runtime; restoring the environment before drawing product conclusions.
+- Restored Chromium; unchanged 16-test E2E baseline passes. Added 8 unit and 3 UI regression cases, all failed before fixes and then passed. Repaired recovery ordering/access denial, draft selection, IME, toolbar Tab, links/copy/annotation identities, Markdown escaping and export size contracts.
+- Implemented v1→v2 in-memory migration (source unchanged), new data for summaries/styles/attachments/stickers/equations/slides/dependencies, insert-parent and real UTC task scheduling. Nine structure/200-node geometry and distinct timeline/matrix/fishbone/tree-table tests now pass; current unit total 92.
+- Added IndexedDB transactional document/recent storage with previous backup, legacy small-cache fallback and startup restoration. Actual 8MB attachment recovery after reload and denied-localStorage startup pass. Inspector/core UI suite currently 5 passed.
+- Formula dependency trial mathjax-full 3.2.2 pulled deprecated/vulnerable xmldom via speech engine. Removed immediately (audit returned zero); switching to maintained @mathjax/src 4.1.3 and offline SVG font configuration. One native patch context typo had no effect and was corrected.
+
 ## Phase 2 — 2026-10-20
 - User prioritized redistributable TC font embedding, cross-page relationship hints and automatic main-branch pagination, plus an expandable focused preview.
 - Inspected clean 0.1 checkpoint and current print layout/preview implementation. Created backup/core-0.1-2026-10-20 and feature/openmind-print-focus.
@@ -25,3 +33,10 @@
 - Fixed real regressions with failing evidence first: non-finite font size, same-parent reorder index, uncommitted draft save, invalid outline focus after sheet undo. Corrected clipboard references, visible relation labels, native save destinations and framework symlinks.
 - Removed electron-builder and its vulnerable toolchain; dependency audit 0 known vulnerabilities. Generated full third-party manifest and runtime license texts.
 - macOS arm64 app packaged and ad-hoc signature verified; no notarization or cross-platform/physical-printer certification claimed.
+## Completion audit 0.3.0 — final verification 2026-10-20
+- Completed 22 defect/reliability groups and feasible local parity implementations; full source and artifact evidence in docs/COMPLETION_AUDIT.md.
+- Fresh 101 unit tests / 34 E2E pass, including nine-structure viewport and timed presentation playback/pause. Strict build, final versioned app, codesign verification and native save/link/metadata/PDF workflows pass.
+- 36 layout-scale cases pass. Six browser/native rich/task/slide PDFs: 11/13/3 pages each, content/fonts/geometry and actual UI raster comparison pass (mean .5314/255).
+- Re-generated seven print fixtures /183 pages, actual UI four-page comparison and native 80/1000-topic PDFs /15/135 pages. All numbered labels, Type0 font programs, links, minimum topic10.2675pt and fault cleanup pass.
+- Five required audit documents complete. Matrix50 rows:43 VERIFIED,1 TESTED,5 NOT STARTED,1 BLOCKED. Public stable release remains not ready; physical hardware, other platforms, notarization, full accessibility/multi-window and advanced parity are honestly recorded.
+- Preserved 0.2 app and initial0.3 QA app. Final artifact release/0.3.0/darwin-arm64/OpenMind.app; no publishing, external messaging or production-profile tests.

@@ -1,86 +1,60 @@
-# Feature parity matrix
+# 功能完成度與對標矩陣 — 0.3.0
 
-Research baseline: 2026-10-20 Pacific/Auckland. Official XMind sources fetched via Agent Reach/Jina, not inferred from memory:
-[Features](https://xmind.com/features/), [User guide](https://xmind.com/user-guide/), [Files](https://xmind.com/user-guide/working-with-files), [Topic editing](https://xmind.com/user-guide/topic-editing-new), [Export](https://xmind.com/user-guide/export-new), [Advanced](https://xmind.com/user-guide/advanced-features), [Platform differences](https://xmind.com/help/feature-differences-across-platforms).
+官方查核：2026-10-20 Pacific/Auckland。[XMind功能](https://xmind.com/features/)、[主題編輯](https://xmind.com/user-guide/topic-editing-new)、[進階功能](https://xmind.com/user-guide/advanced-features)、[平台差異](https://xmind.com/help/feature-differences-across-platforms)。平台能力不同，以公開行為對標，不複製專有資產。
 
-The official platform matrix distinguishes desktop customization/merging/Map Shot/SVG/Pitch PowerPoint/TextBundle, web comments and several web/mobile AI functions. Parity targets are cross-platform product capabilities, not a claim that XMind exposes every feature everywhere.
+狀態：NOT STARTED／IN PROGRESS／IMPLEMENTED／TESTED／VERIFIED／BLOCKED。VERIFIED僅指所列OpenMind條件在macOS／Chromium實際驗收，不代表完整XMind對等。U=101單元，E=34E2E，L=36版面規模測例，P=實際PDF，N=封裝原生；命令見[TEST_PLAN](TEST_PLAN.md)，Dxx見[稽核](COMPLETION_AUDIT.md)，Bxx見[限制](BUGS_AND_LIMITATIONS.md)。
 
-Allowed status: NOT STARTED / IN PROGRESS / IMPLEMENTED / TESTED / VERIFIED / BLOCKED. VERIFIED requires actual acceptance evidence. Final statuses reflect executed checks in VERIFICATION.md. VERIFIED applies to the stated OpenMind target and tested macOS/browser scope, not complete XMind parity. P0=core, P1=professional, P2=advanced. Test code references will be added when executed.
+| ID／類別 | 功能 | 目前實作 | 缺陷／限制 | 預期行為／驗收條件 | 實際結果 | 狀態 |
+|---|---|---|---|---|---|---|
+| F01 編輯 | 中央／子／同層／多行 | 穩定ID可逆交易 | 中央不可刪剪 | 重開後文字階層一致 | U/E/N，D09/19 | VERIFIED |
+| F02 編輯 | 插入父主題 | 普通／中央／自由上插 | 無批次插父 | 順序子樹保留、完整Undo/Redo | U通過；UI接真命令 | TESTED |
+| F03 編輯 | 拖曳／重排／複製剪貼刪 | 防循環、ID重編、清參照 | 無富資料系統剪貼簿 | 真拖曳、參照正確及Undo | U/E，D03–05 | VERIFIED |
+| F04 編輯 | 多選／框選／批次 | Shift、框選、批次樣式刪除 | 無智慧對齊 | 框選17節點不改內容 | E通過 | VERIFIED |
+| F05 編輯 | 自由主題 | 拖曳、邊界安排新位置 | 可手動疊放 | 新增兩個位置不同且保存 | U/E，D20 | VERIFIED |
+| F06 輸入 | 繁中／IME／鍵盤 | 組字不提早提交、Tab導航 | 全讀屏／觸控未驗 | 草稿寫原節點、特殊字保存 | E，D09–11 | VERIFIED |
+| F07 歷史 | Undo/Redo | 文件交易、Redo失效 | 80次、開檔重設 | 樣式標註排程結構可逆 | U/E通過 | VERIFIED |
+| F08 檔案 | 新建／開存／另存 | 原生對話框、原子寫入 | 新文件首次需選位置 | 全欄位原生往返 | E/N通過 | VERIFIED |
+| F09 儲存 | 自動儲存／復原 | IndexedDB working/previous | 非永久備份 | 8MB附件reload、拒存提示 | U/E，D01/02/12 | VERIFIED |
+| F10 格式 | v1→v2遷移 | 記憶體補預設、保源 | 不支援未來版 | v1 bytes不變、v2往返 | U/E通過 | VERIFIED |
+| F11 工作區 | 最近／多表 | 八文件、建表改名複製切換 | 無版本時間線 | 重開及Undo建表安全 | U/E/N通過 | VERIFIED |
+| F12 畫布 | 平移縮放適應置中 | 游標縮放、結構變化重新fit | 巨圖仍需導航 | 不改資料、九結構可視 | E/L，D21 | VERIFIED |
+| F13 結構 | Mind Map | 左右平衡 | 無分支混搭 | 四規模節點無重疊 | U/E/L/P通過 | VERIFIED |
+| F14 結構 | Logic Chart | 右向階層曲線 | 無左向選項 | 有限座標、內容完整 | U/E/L通過 | VERIFIED |
+| F15 結構 | Brace Map | 子群括號SVG | 無逐群括號樣式 | 真括號、完整階層 | U/E/L通過 | VERIFIED |
+| F16 結構 | Tree Chart | 水平階層直角線 | 無全部方向 | 專用連線、無重疊 | U/E/L通過 | VERIFIED |
+| F17 結構 | Organization | 上下階層 | 無各層手調寬度 | 兄弟間距及資料保留 | U/E/L通過 | VERIFIED |
+| F18 結構 | Timeline | 主幹順序＋上下子樹 | 非日期比例 | 與組織圖幾何不同 | U/E/L通過 | VERIFIED |
+| F19 結構 | Fishbone | 主脊、交錯斜肋 | 無任意角度手調 | 專用幾何、無節點重疊 | U/E/L通過 | VERIFIED |
+| F20 結構 | Matrix | 主分支欄、縮排列 | 非任意欄資料表 | 欄群導線、專用座標 | U/E/L，B06 | VERIFIED |
+| F21 結構 | Tree Table | 層級欄、父格跨後代列 | 非試算表 | 跨列格、主題可編輯 | U/E/L，B06 | VERIFIED |
+| F22 結構 | 混合分支 | 無每分支策略 | B05 | 分支獨立版面與引用 | 未實作 | NOT STARTED |
+| F23 標註 | Relationship | 方向虛線文字與索引 | 無曲線控制點 | 刪改清理、PDF雙向跳頁 | U/E/P通過 | VERIFIED |
+| F24 標註 | Boundary | 單子樹外框文字 | 無任意跨兄弟群組 | 隨摺疊移刪調整 | U/P通過 | VERIFIED |
+| F25 標註 | Summary | ID錨定摘要可編刪 | 摺疊目標可僅在索引 | 保存、清參照、S1跨頁文字 | U/E/P通過 | VERIFIED |
+| F26 註記 | Notes/Label | 純文字保存搜尋 | 非富文字、PDF圖示 | 原生往返、篩選定位 | U/E通過 | VERIFIED |
+| F27 連結 | Topic/Web | 內部選擇、安全URL | 無檔案連結 | 清參照、原生外連分派 | U/E/N通過 | VERIFIED |
+| F28 標記 | Markers/Stickers | Unicode選擇 | 非插畫庫、emoji回退 | 保存顯示匯出 | U/E/P通過 | VERIFIED |
+| F29 圖片 | 內嵌raster | 受限內嵌圖 | 無裁圖／說明 | 不套錯文件、PDF真影像 | E/P通過 | VERIFIED |
+| F30 附件 | 二進位檔 | 每節點10個、各2MB、下載刪除 | 無錄音、總20MB | bytes相同、reload不丟 | U/E/N通過 | VERIFIED |
+| F31 公式 | 離線TeX | MathJax Base/AMS向量 | 非完整TeX／化學 | 真paths、原生往返與PDF | U/E/P通過 | VERIFIED |
+| F32 樣式 | 字體／透明／線／間距 | 三字族、對齊、描邊、複製重設 | 系統備字不全嵌 | 欄位保存且真正渲染 | U/E/P通過 | VERIFIED |
+| F33 範本 | 自訂主題／範本 | IDB保存套用刪除 | 無主題商店 | 重啟可用、新文件獨立 | U/E通過 | VERIFIED |
+| F34 大綱 | 同源Outliner | 編輯新增階層摺疊 | 非另一文件 | 切視圖資料一致 | E通過 | VERIFIED |
+| F35 搜尋 | 全文／篩選定位 | 完整計數分批、保留query | 無取代／標記篩選 | 199結果全展開、唯讀可定位 | E，D15/18 | VERIFIED |
+| F36 專注 | 兩種預覽再展開 | 分支暫展開、紙張縮放導航 | 視圖狀態不存檔 | Esc返回、原摺疊不變 | E/P通過 | VERIFIED |
+| F37 簡報 | 順序播放導航PDF | 保存排序、5秒自播、16:9、全螢幕 | 無PPTX；全螢幕依環境 | 導航不改內容、順序保存、3頁PDF | U/E/N/P；自播與暫停通過 | VERIFIED |
+| F38 任務 | 日期依賴甘特圖 | 日曆日、循環拒絕、真排程 | 無假日／資源日曆 | DST正確、單步Undo、13頁PDF | U/E/N/P通過 | VERIFIED |
+| F39 交換 | FreeMind .mm子集 | 階層基本樣式筆記連結箭頭 | 明示有損、非全相容 | 匯入存檔匯出再匯入一致 | E通過 | VERIFIED |
+| F40 交換 | Markdown/OPML | 階層多行、UTF8限額 | 明示進階欄位不含 | 特殊符號往返、拒絕不覆蓋 | U/E通過 | VERIFIED |
+| F41 輸出 | SVG/PNG | 可見展開內容、嵌繁中字型 | PNG像素限額 | 真下載、4節點、WOFF2 data | E通過 | VERIFIED |
+| F42 輸出 | PDF | 地圖大綱任務簡報向量 | 非PDF/A、無匯入 | 內容尺寸字型邊界驗證 | N/P通過 | VERIFIED |
+| F43 列印 | 六策略／紙張 | fit可讀海報主分支選取大綱 | fit可低於10pt、海報切頁 | 真頁數字級與預覽一致 | U/E/P，183頁 | VERIFIED |
+| F44 列印 | 繁中及跨頁R/S | 靜態400/700、索引跳頁 | 罕字回退、最小pt僅主文字 | Type0 bytes、雙向頁碼連結 | N/P，135頁大圖 | VERIFIED |
+| F45 硬體 | 實體列印 | 原生／瀏覽器橋接 | B01無硬體 | 真紙邊界色彩拼接 | 未實印 | BLOCKED |
+| F46 平台 | macOS arm64開發包 | 真app、ad-hoc | B02/03公證與其他OS | 成品真編輯存檔PDF | N通過 | VERIFIED |
+| F47 AI | 生成／擴寫／多模態 | 無假推理控制項 | provider／同意未實作 | 真inference預覽接受Undo | 未實作 | NOT STARTED |
+| F48 協作 | 分享評論同步 | 純本機 | 無CRDT/ACL伺服器 | 多人離線重連與權限 | 未實作 | NOT STARTED |
+| F49 相容性 | XMind/Office/TextBundle | 不宣稱支援 | 無converter/corpus | 目標程式開啟、損失報告 | 未實作 | NOT STARTED |
+| F50 進階 | 混檔／版本／加密／OS | Undo另存內複製不是替代品 | B13 | 獨立規格及復原協定 | 未實作 | NOT STARTED |
 
-| Category | Feature | XMind public behavior | OpenMind target | Priority | Dependencies | Status | Automated test | Manual acceptance | Remaining gap |
-|---|---|---|---|---|---|---|---|---|---|
-| Editing | Root/child/sibling | Topic hierarchy | Stable IDs and reversible mutations | P0 | Model | VERIFIED | tests/core.test.ts; docs/VERIFICATION.md | Keyboard and reopen | Insert-parent command remains NOT STARTED |
-| Editing | Insert parent | Insert parent topic | Reparent under a new inserted parent | P1 | Tree commands | NOT STARTED | — | Insert above selected topic | Command not implemented |
-| Editing | Multiline/CJK text | Topic text formatting | Safe Unicode wrapped SVG text | P0 | Layout | VERIFIED | layout/e2e; docs/VERIFICATION.md | Mixed CJK PDF | See KNOWN_LIMITATIONS.md; acceptance scope in VERIFICATION.md |
-| Editing | Copy/cut/paste/delete | Branch editing | Preserve subtree/styles | P0 | Model/history | VERIFIED | core/e2e; docs/VERIFICATION.md | Duplicate then undo | System clipboard rich data later |
-| Editing | Drag/reorder/reparent | Adjust hierarchy | Cycle-safe drag and sibling order | P0 | Model | VERIFIED | core/e2e; docs/VERIFICATION.md | Drag to parent | See KNOWN_LIMITATIONS.md; acceptance scope in VERIFICATION.md |
-| Editing | Multi-select/batch | Select topics | Shift selection, batch style/delete | P0 | Selection | VERIFIED | core/e2e; docs/VERIFICATION.md | Select and style | See KNOWN_LIMITATIONS.md; acceptance scope in VERIFICATION.md |
-| Editing | Floating topics | Freely placed root topics | Movable detached subtrees | P1 | Layout | TESTED | tests/layout-print.test.ts | Drag floating topic | See KNOWN_LIMITATIONS.md; acceptance scope in VERIFICATION.md |
-| Canvas | Pan/zoom/fit/center | Navigation | Bounded cursor zoom and fit | P0 | Scene | VERIFIED | e2e; docs/VERIFICATION.md | Pan and recover map | Touch gestures later |
-| Canvas | Marquee/grid/smart guides | Alignment helpers | Marquee and alignment assistance | P1 | Selection | NOT STARTED | — | Marquee known nodes | No smart guidelines |
-| Canvas | Read/Zen modes | Platform-specific modes | Read-only/focused view | P1 | UI | TESTED | e2e | Editing disabled | Zen later |
-| History | Undo/redo | Reversible edits | Transaction snapshots | P0 | Model | VERIFIED | tests/core.test.ts; docs/VERIFICATION.md | Edit then undo/redo | See KNOWN_LIMITATIONS.md; acceptance scope in VERIFICATION.md |
-| History | Autosave/recovery | File cache | Previous-copy recovery, honest errors | P0 | Storage | VERIFIED | storage/e2e; docs/VERIFICATION.md | Refresh and restore | See KNOWN_LIMITATIONS.md; acceptance scope in VERIFICATION.md |
-| History | Version history/change tracking | Version workflows | Durable revisions | P2 | Persistence | NOT STARTED | — | Restore older revision | Undo is not version history |
-| Files | New/open/save/save as | Local files | Native dialogs/atomic save | P0 | Desktop | VERIFIED | desktop/e2e; docs/VERIFICATION.md | Reopen exact document | See KNOWN_LIMITATIONS.md; acceptance scope in VERIFICATION.md |
-| Files | Recent/multiple documents | Workspace | Local library of eight documents | P1 | Storage | TESTED | Browser workspace flow + persistence | Reopen older document | No durable version archive |
-| Files | Multiple sheets/rename/duplicate | Sheet management | Lossless multi-sheet workbook | P1 | Model | VERIFIED | core/e2e; docs/VERIFICATION.md | Duplicate and reopen | See KNOWN_LIMITATIONS.md; acceptance scope in VERIFICATION.md |
-| Files | Merge/save sheet as | Desktop merge/export sheet | Explicit merge with IDs remapped | P1 | Import | NOT STARTED | — | Merge overlapping IDs | Pending |
-| Structure | Mind map | Two-sided branches | Balanced two-sided layout | P0 | Layout | VERIFIED | tests/layout-print.test.ts; docs/VERIFICATION.md | No overlap | See KNOWN_LIMITATIONS.md; acceptance scope in VERIFICATION.md |
-| Structure | Logic chart | Directional hierarchy | Rightward tree | P1 | Layout | TESTED | tests/layout-print.test.ts | Deep/wide tree | Left orientation later |
-| Structure | Tree chart | Hierarchical chart | Orthogonal horizontal tree | P1 | Layout | TESTED | tests/layout-print.test.ts | Correct connectors | Mixed structure later |
-| Structure | Organization chart | Org hierarchy | Top-down layout | P1 | Layout | TESTED | tests/layout-print.test.ts | Sibling spacing | See KNOWN_LIMITATIONS.md; acceptance scope in VERIFICATION.md |
-| Structure | Timeline | Sequential chart | Ordered main branch spine | P1 | Layout | TESTED | tests/layout-print.test.ts | Chronological ordering by topic | Date scale later |
-| Structure | Brace map | Brace hierarchy | Dedicated brace geometry | P1 | Layout | NOT STARTED | — | Brace encompasses descendants | Pending |
-| Structure | Fishbone | Cause/effect diagram | Alternating angled causes | P1 | Layout | NOT STARTED | — | Branch angle/labels | Pending |
-| Structure | Matrix | Grid information | Real row/column semantics | P1 | Model/layout | NOT STARTED | — | Resize matrix | Pending |
-| Structure | Tree table | Hierarchical table | Hierarchy with aligned columns | P1 | Model/layout | NOT STARTED | — | Table cells and export | Pending |
-| Structure | Mixed structures | Desktop branch structure | Per-branch strategy | P2 | Layout | NOT STARTED | — | Move between strategies | Pending |
-| Annotation | Relationship | Labeled connection | Directed/dashed labeled line | P1 | Scene | TESTED | core/layout | Move/delete endpoints | Label/arrow/line properties persisted; editing direction/curve controls pending |
-| Annotation | Boundary | Enclose branch | Anchored descendant bounds | P1 | Scene | TESTED | tests/layout-print.test.ts | Collapse/move/delete | Multi-sibling groups later |
-| Annotation | Summary/callout | Anchored summaries | Summary tied to selected range | P1 | Scene | NOT STARTED | — | Reorder retains anchor | Pending |
-| Annotation | Notes/labels | Enrich topics | Persist searchable text | P1 | Model | VERIFIED | formats/e2e; docs/VERIFICATION.md | Save/reopen | Rich text later |
-| Annotation | Topic/web links | Navigate resource/topic | Safe URLs and internal links | P1 | Model | VERIFIED | tests/core.test.ts; docs/VERIFICATION.md | Navigate link | Local file links later |
-| Annotation | Markers/icons/stickers | Visual identification | Unicode markers | P1 | Fonts | TESTED | formats | SVG/PDF | Sticker catalog later |
-| Annotation | Local images | Embed image | Inline raster image | P1 | Scene | TESTED | formats/print | Reopen/export image | Captions/cropping later |
-| Annotation | Attachments/audio notes | Embedded files/recording | Safe embedded media | P2 | Storage | NOT STARTED | — | Save/open file safely | Pending |
-| Annotation | Equations | LaTeX math/chemistry | Accessible vector math | P2 | Renderer | NOT STARTED | — | CJK/math PDF | Pending |
-| Style | Shapes/fills/borders/fonts | Topic formatting | Persist shape/color/size/emphasis | P0 | Model/scene | TESTED | formats/e2e | Roundtrip and PDF | Fixed system font family; opacity/alignment not implemented |
-| Style | Theme palettes/background | Color theme | Built-in palettes and canvas color | P1 | Style | TESTED | formats | Theme undo and export | Custom theme library later |
-| Style | Line/spacing/direction | Branch formatting | Adjustable line geometry/spacing | P1 | Layout | NOT STARTED | — | Dense tree print | Pending |
-| Style | Light/dark | App appearance | Theme toggle | P1 | UI | TESTED | e2e | Contrast and focus | Full accessibility audit later |
-| Templates | Built-in/personal | Reuse maps | Built-in editable starter maps | P1 | Files | TESTED | tests/core.test.ts | Create and edit template | Personal templates later |
-| Productivity | Outliner | Same map as outline | Editable shared hierarchy | P0 | Model | VERIFIED | e2e; docs/VERIFICATION.md | Edit and switch views | See KNOWN_LIMITATIONS.md; acceptance scope in VERIFICATION.md |
-| Productivity | Search/find/replace | Text search | Text/notes/label search and locate | P0 | Model | VERIFIED | e2e; docs/VERIFICATION.md | Hidden branch search | Replace/filter markers later |
-| Productivity | Focus/fold | Drill-down/navigation | Focus branch and return | P0 | Layout | VERIFIED | e2e; docs/VERIFICATION.md | Focus and print scope | See KNOWN_LIMITATIONS.md; acceptance scope in VERIFICATION.md |
-| Productivity | Pitch/presentation | Slides from map | Sequential presentation | P1 | Model | NOT STARTED | — | Play/navigate/export | Pending |
-| Tasks | To-do/status/dates | Track tasks | Status/start/due fields | P1 | Model | VERIFIED | core/formats; docs/VERIFICATION.md | Reopen dates | Dependencies later |
-| Tasks | Gantt/work calendar | Date scheduling | Timezone/calendar-aware scheduling | P2 | Task graph | NOT STARTED | — | DST/holiday/dependency | Pending |
-| Capture | Map Shot | Desktop share image | Whole/focus SVG/PNG | P1 | Scene | TESTED | e2e | Image pixels/content | Arbitrary region later |
-| Import | Native | Native workbook | Lossless strict v1 JSON | P0 | Validation | VERIFIED | formats; docs/VERIFICATION.md | Reopen all fields | Future-version migration later |
-| Import | Markdown/OPML | Structured import | Hierarchy conversion with warnings | P1 | Validation | VERIFIED | formats; docs/VERIFICATION.md | CJK/special chars | Nonhierarchical fields not converted |
-| Import | XMind/FreeMind | External formats | Tested format-version conversion | P1 | ZIP/XML | NOT STARTED | — | Corpus and loss reports | No compatibility claim |
-| Import | TextBundle/DOCX/other | Document import | Explicit tested converters | P2 | Parsers | NOT STARTED | — | Embedded-media corpus | Pending |
-| Export | Native/SVG/PNG | Local/vector/raster | Real document/vector/raster | P0 | Scene | VERIFIED | formats/e2e; docs/VERIFICATION.md | Reopen and inspect | Raster size cap |
-| Export | Markdown/OPML | Hierarchy export | Honest lossy conversion | P1 | Formats | VERIFIED | formats; docs/VERIFICATION.md | Warning then reimport | Notes/styles not preserved |
-| Export | PDF | Map/outliner/pitch PDF | Vector text and physical geometry | P0 | Print/desktop | VERIFIED | desktop/pdf; docs/PHASE2_VERIFICATION.md | Embedded TC TrueType/text/pages | Pitch later; uncommon glyph fallback |
-| Export | DOCX/XLSX/PPTX/TextBundle | Office/bundle export | Real interoperable files | P2 | Converters | NOT STARTED | — | Open in target apps | Pending |
-| Print | Preview/paper/orientation | Print UI | Actual page layout preview | P0 | Print | VERIFIED | print/e2e; docs/VERIFICATION.md | Change settings | Printer hardware untested |
-| Print | Single page | Fit map | Computed minimum text warning | P0 | Print | VERIFIED | print; docs/VERIFICATION.md | Large map warning | User may override |
-| Print | Readable multi-page | Product target | Reflow cards at minimum pt | P0 | Print | VERIFIED | print; docs/VERIFICATION.md | No clipped text | Map geometry intentionally reflowed |
-| Print | Poster | Product target | Overlap/cut marks/assembly grid | P0 | Print | VERIFIED | print; docs/VERIFICATION.md | Page order and joins | Node cuts intentional in poster |
-| Print | Branch/selection/outline | Scoped output | Explicit subtree/outline pages | P0 | Print | VERIFIED | print/e2e; docs/PHASE2_VERIFICATION.md | Every selected descendant | Selection fit may warn |
-| Print | Main-branch automatic pagination | OpenMind target | Connected partitions at minimum topic size, ancestor context and continuations | P0 | Pagination | VERIFIED | print-next/e2e; docs/PHASE2_VERIFICATION.md | 10/50/200/1000-node coverage and geometry | Oversized paths use explicit readable reflow |
-| Print | Cross-page relationships | OpenMind target | Bidirectional page hints, clickable destinations and complete label index | P0 | Page references | VERIFIED | print-next/e2e/PDF; docs/PHASE2_VERIFICATION.md | Both endpoints and PDF link destinations | Names abbreviated in index; labels retained |
-| Print | Offline Traditional Chinese fonts | OpenMind target | OFL static 400/700 fonts embedded as Type0/TrueType | P0 | Font subsets | VERIFIED | actual PDF font programs; docs/PHASE2_VERIFICATION.md | Font bytes/OS2 weights/searchable CJK | Rare glyph fallback; standalone SVG/PNG pending |
-| Focus | Expandable editor/print preview | OpenMind target | Preview branch then focused editing; focused zoomable paper preview | P1 | View state | VERIFIED | print-focus E2E; docs/PHASE2_VERIFICATION.md | Collapsed branch, no document mutation, Escape, zoom/navigation | Focus state is session-local |
-| Print | Margins/header/footer/BW | Paper controls | Physical settings and page numbering | P0 | Print | VERIFIED | print/pdf; docs/VERIFICATION.md | Compare preview/PDF | See KNOWN_LIMITATIONS.md; acceptance scope in VERIFICATION.md |
-| AI | Text/prompt/expand/summarize | Create/Grow AI | Optional replaceable provider | P2 | Consent/provider | NOT STARTED | — | Actual inference | No configured model |
-| AI | Reorganize/explain/work breakdown | Web/AI tools | Previewable document operations | P2 | Provider | NOT STARTED | — | Accept/undo changes | Pending |
-| AI | Image/document/record/draw to map | Platform-specific multimodal | Explicit consent pipeline | P2 | Media/provider | NOT STARTED | — | Real source extraction | Pending |
-| AI | Pitch video/make image/remove BG | Web/mobile features | Optional media adapters | P2 | Provider | NOT STARTED | — | Actual generated media | Pending |
-| Collaboration | Share/comment/live editing | Web collaboration | Opt-in authenticated CRDT | P2 | Server/auth | NOT STARTED | — | Concurrent edits and ACL | No server deployed |
-| Collaboration | Self-host/conflicts/history | Product target | Consistent versioned synchronization | P2 | Protocol | NOT STARTED | — | Offline/rejoin conflicts | Pending |
-| Integrations | Web clip/MCP/CLI/ChatGPT | Official integrations | Optional import adapters | P2 | Stable API | NOT STARTED | — | Import provenance | Pending |
-| Platform | macOS/Windows/Linux/mobile/web | Platform differences | Desktop first, browser companion | P1 | Packaging | TESTED | desktop | Run packaged app | Windows/Linux/mobile unverified |
-| Advanced | Password/numbering/quick entry | Additional guide features | Encrypted files/numbering/OS capture | P2 | Files/OS | NOT STARTED | — | Recovery and platform checks | Pending |
+受限但已驗證的實作與未開始能力分開記錄；正式發布阻擋不因核心回歸通過而算完成。

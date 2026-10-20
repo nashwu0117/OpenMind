@@ -25,7 +25,7 @@ test('branch preview expands into an editable focused workspace and Escape resto
   await page.getByRole('button', {name: '大綱', exact: true}).click();
   await expect(page.locator('.outliner .outline-row')).toHaveCount(4);
   await page.getByRole('button', {name: '心智圖', exact: true}).click();
-  await page.keyboard.press('Tab'); await page.getByLabel('編輯主題文字', {exact: true}).fill('專注後新增的想法'); await page.getByRole('button', {name: '完成編輯'}).click();
+  await canvas.locator('[data-node-id]').first().click(); await page.keyboard.press('Tab'); await page.getByLabel('編輯主題文字', {exact: true}).fill('專注後新增的想法'); await page.getByRole('button', {name: '完成編輯'}).click();
   await expect(canvas.locator('[data-node-id]')).toHaveCount(5);
   await page.keyboard.press('Escape'); await expect(page.locator('.app')).toHaveClass('app');
   await expect(page.locator('.sidebar')).toBeVisible(); await expect(canvas.locator('[data-node-id]')).toHaveCount(18);

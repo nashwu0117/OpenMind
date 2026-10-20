@@ -18,7 +18,7 @@ export function planPrint(sheet: Sheet, settings: PrintSettings, selection = she
   if ((settings.landscape && wm < hm) || (!settings.landscape && wm > hm)) [wm, hm] = [hm, wm];
   if (![wm, hm, settings.margin, settings.minPt, settings.overlap].every(Number.isFinite) || wm < 60 || hm < 60 || wm > 1200 || hm > 1200 || settings.margin < 0 || settings.margin > Math.min(wm, hm) / 3 || settings.minPt < 6 || settings.minPt > 36 || settings.overlap < 0 || settings.overlap > 30) throw new Error('紙張、邊界、重疊或最低字級超出可用範圍。');
   const width = wm * PX, height = hm * PX, margin = settings.margin * PX;
-  const referenceArea = sheet.relationships.length || ['branches', 'readable', 'outline'].includes(settings.mode) ? 92 : 0;
+  const referenceArea = sheet.relationships.length || sheet.summaries.length || ['branches', 'readable', 'outline'].includes(settings.mode) ? 92 : 0;
   const cw = width - 2 * margin, ch = height - 2 * margin - 50 - referenceArea;
   if (cw < 100 || ch < 100) throw new Error('可列印範圍太小，請增加紙張或減少邊界。');
   const area = {width: cw, height: ch, minPt: settings.minPt + .05};

@@ -3,7 +3,7 @@ import {wrapText} from './layout';
 import type {PrintPage} from './print';
 import type {PageArea} from './pagination';
 
-export type PageReference = {key: string; kind: 'relationship' | 'continuation'; direction: 'outgoing' | 'incoming' | 'both'; label: string; target: string; pages: number[]};
+export type PageReference = {key: string; kind: 'relationship' | 'continuation' | 'summary'; direction: 'outgoing' | 'incoming' | 'both'; label: string; target: string; pages: number[]};
 export type IndexLine = {text: string; bold?: boolean};
 export function pageRange(pages: number[]): string {
   const values = [...new Set(pages)].sort((a, b) => a - b), ranges: string[] = [];
@@ -35,6 +35,12 @@ export function annotatePages(sheet: Sheet, pages: PrintPage[], area: PageArea):
       {text: `來源：第 ${pageRange(fromPages)} 頁 · ${sheet.nodes[relationship.from].text.replaceAll('\n', ' ').slice(0, 80)}`},
       {text: `${relationship.directed ? '指向' : '連結'}：第 ${pageRange(toPages)} 頁 · ${sheet.nodes[relationship.to].text.replaceAll('\n', ' ').slice(0, 80)}`},
     ]});
+  });
+  sheet.summaries.forEach((summary,i)=>{
+    const numbers=[...new Set(summary.topicIds.flatMap(id=>locations.get(id)??[]))].sort((a,b)=>a-b);if(!numbers.length)return;
+    const key=`S${i+1}`;
+    if(numbers.length>1||numbers.some(number=>pages[number-1].reflow)){needsIndex=true;for(const number of numbers)pages[number-1].references.push({key,kind:'summary',direction:'both',label:summary.text,target:'摘要範圍',pages:numbers.filter(n=>n!==number).length?numbers.filter(n=>n!==number):[number]});}
+    indexRows.push({key,lines:[...wrapText(`${key} · ${summary.text}`,14,area.width-24).map(text=>({text,bold:true})),{text:`範圍：第 ${pageRange(numbers)} 頁`},...summary.topicIds.filter(id=>locations.has(id)).map(id=>({text:`第 ${pageRange(locations.get(id)!)} 頁 · ${sheet.nodes[id].text.replaceAll('\n',' ').slice(0,80)}`}))]});
   });
   const branches = new Map<string, number[]>();
   pages.forEach((page, index) => {if (page.branchId) branches.set(page.branchId, [...branches.get(page.branchId) ?? [], index + 1]);});

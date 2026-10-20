@@ -31,7 +31,7 @@ Ship a runnable offline editor with safe native files, transactional history, SV
 - Python preview comparison needed Pillow in isolated QA venv; installed there, comparisons passed.
 
 ## Next Step
-Hand off the verified 0.2 app and phase-2 report. Further parity work is a separate phase; physical-printer and cross-platform validation remain explicit limits.
+Finish offline MathJax 4 SVG integration and wire the new local capabilities into real editor/task/presentation/format workflows, then exercise full browser and native acceptance.
 
 ## Phase 2 — print clarity and focus (2026-10-20)
 Starting point: clean 5211d16f86c98d8ab7a4f8259591d2e2c6d3d8c1; backup/core-0.1-2026-10-20; feature/openmind-print-focus.
@@ -47,3 +47,18 @@ Completion condition: legally bundled TC font used offline by preview and embedd
 User clarified: both editor and print preview. Both implemented and verified, including temporarily revealing collapsed descendants without changing recovery data.
 
 Phase-2 repairs: Jina 403 → official raw sources; variable Noto produced Type3 → static 400/700 verified Type0/TrueType; Vitest raw-CSS stub → real browser font checks; collapsed focus regression → view-only expansion; 1000-node native data-URL failure → private temporary HTML with cleanup. Final checks: 69 unit tests, 16 E2E, strict build/package, packaged native workflows, 183-page fixture corpus, 15-page relation PDF and 135-page 1000-node branch PDF. Detailed evidence: docs/PHASE2_VERIFICATION.md.
+
+## Completion audit and feature parity — 2026-10-20
+User supplied Completion & Feature Parity Master Prompt. Starting HEAD 425f887e453e3599b2872a0ce44942c2af3c13c2, clean; backup/print-focus-0.2-2026-10-20; feature/openmind-completion-audit.
+
+Completion condition: audit real code and UI across all requested categories, repair all reproducible core defects, implement feasible missing local diagram/annotation/productivity capabilities with meaningful acceptance tests, verify persisted full data and supported format round trips, rerun actual PDF/preview/native checks, and produce the five requested audit/readiness documents. Advanced features must retain truthful per-feature statuses; no full-XMind or public-release claim without evidence. Publishing and external messaging are not authorized.
+
+1. Safe checkpoint, current baseline and current official comparison — complete
+2. Reproduce data/editor/recovery/layout/format/UI defects and write audit acceptance cases — complete
+3. Repair P0/P1, add feasible local parity capabilities and regression tests — complete
+4. Browser/native interaction, 10/50/200/1000-node and real PDF acceptance — complete
+5. Complete audit matrix, limits, release readiness, versioned package and handoff — complete
+
+Baseline: 69 unit tests and strict build passed. Missing Chromium headless shell 1248 was repaired; unchanged 16 baseline E2E passed. This environment failure was not counted as a product regression.
+
+Final: schema v2 preserves v1 sources; 22 defect/reliability groups resolved. All scoped local capabilities wired and tested: nine structures, summaries, styles, attachments/stickers/vector equations, themes/templates, task/Gantt dependencies, presenter/PDF, FreeMind subset, embedded standalone graphics, view-only search, marquee and floating placement. Fresh 101 unit and 34 E2E pass; 36 layout cases, six rich/task/slide PDFs, 183-page print corpus and final packaged native 15/135-page checks pass. The five requested documents and 0.3.0 app are delivered. Matrix: 43 VERIFIED, 1 TESTED, 5 NOT STARTED, 1 BLOCKED. Full parity and public release remain unachieved for the explicit limitations in docs/RELEASE_READINESS.md; no publishing authorized or performed.

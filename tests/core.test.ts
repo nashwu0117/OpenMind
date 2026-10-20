@@ -19,7 +19,7 @@ describe('trust boundary and lossless files', () => {
         s.nodes[id].children.push('gone'); if (kind === 'version')
         (b as unknown as {
             version: number;
-        }).version = 2; if (kind === 'unknown')
+        }).version = 3; if (kind === 'unknown')
         (s.nodes[id] as unknown as Record<string, unknown>).secret = 'unknown'; if (kind === 'unsafe-link')
         s.nodes[id].link = 'javascript:alert(1)'; if (kind === 'NaN')
         s.nodes[id].style.fontSize = NaN; if (kind === 'duplicate-child')

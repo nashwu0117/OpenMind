@@ -1,15 +1,7 @@
-# Known limitations — 0.2
+# 已知限制 — 0.3.0
 
-- This is a working initial development release, not full XMind parity or a production-certified release. See the complete matrix for outstanding work.
-- Five layout choices; brace/fishbone/matrix/tree-table and mixed per-branch layouts are not implemented. Timeline is an ordered hierarchy without a date scale.
-- Relationship labels and one-subtree boundaries work; summaries/callouts, custom connector direction/line-style controls and sibling-range boundaries need work. Cross-branch links are not duplicated when copying only one endpoint.
-- Unicode marker selection, notes/labels/links, raster images and simple task dates/status are implemented. Attachments, equations, audio, Gantt/dependency scheduling, presentation and personal templates are not implemented. Starter templates currently reuse the same editable branch scaffold.
-- Recent library: at most eight local documents. Browser/Electron localStorage is capacity-limited and clearable, so download .openmind backups. Recovery retains current/pending/previous data; it is not durable version history. Undo holds at most 80 transactions and resets on file open.
-- Native save uses temp file + fsync + rename. The first save after opening/restarting or switching documents asks for a destination, deliberately preventing accidental overwrite of a rejected import or another document. OS permission/full-disk failures need broader platform fault injection.
-- Multi-select supports batch style/delete/copy. Drag moves one branch at a time. No marquee or smart guides. Pointer pan/zoom and keyboard navigation available; complete screen-reader/mobile/touch audit pending. Application shell targets desktop widths ≥820px.
-- No .xmind/.mm or Office/TextBundle converters, AI inference, sharing server, live collaboration, device sync, password encryption or telemetry. No inactive mock controls for these features.
-- Print reflow changes spatial structure; poster intentionally cuts with overlap. Main branches now auto-partition at the minimum topic size, with explicit reflow fallback for oversized paths/nodes; single fit and selected-subtree fit can still warn. The minimum-point setting applies to main topic text, not metadata/footer. Notes are saved and searchable, but SVG/PDF show an icon rather than the full note body. No PDF/A guarantee.
-- Noto Sans TC static 400/700 is bundled under OFL and embedded as Type0/TrueType in verified PDFs. Uncovered characters/emoji can still use system fonts; standalone SVG/PNG have not received the same font-embedding path. Conservative text measurement is not full font shaping. macOS PDF QA is separate from Windows/Linux or physical-printer acceptance.
-- Branch partitioning repeats ancestors as context, increasing page count. Greedy layout is not guaranteed to minimize paper use. Relation labels are fully retained in the index; endpoint node titles there are abbreviated while complete topic content remains in the referenced pages. Cross-page boundaries are drawn only when their entire range is on a page.
-- Host-native bundle is ad-hoc signed on macOS. No notarization, installer, auto-update, Windows/Linux release acceptance or mobile package. Packaging refuses to overwrite an existing output.
-- No open-source hosting/push was requested; source and local Git checkpoints remain on the user's machine. Apache-2.0 selected for permissive use, modification/distribution and explicit patent grant; no pre-existing license was replaced.
+舊連結入口保留，完整清單集中於[BUGS_AND_LIMITATIONS](BUGS_AND_LIMITATIONS.md)，避免0.2文字把已完成的九版面、附件、公式、甘特圖、簡報、自訂範本與FreeMind子集誤列未開始。
+
+本版是離線本機開發版，尚非完整XMind對等。無.xmind／Office、混合結構、完整工作日曆、AI、協作、永久版本、正式簽署公證、跨平台或實體列印驗收。原生v2保留全部支援欄位；v1只在記憶體遷移。請另存原生備份。
+
+[本輪稽核](COMPLETION_AUDIT.md)與[發布判定](RELEASE_READINESS.md)為目前結果；0.1/0.2報告保留歷史版本範圍。

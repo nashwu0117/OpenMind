@@ -1,18 +1,13 @@
-# OpenMind 0.1 product specification
+# OpenMind 0.3.0 產品規格
 
-Baseline: 2026-10-20, Pacific/Auckland. Audience: people who need private, editable mind maps and legible printed documents. Core software is free, offline, without accounts, telemetry, ads, watermarks or remote APIs. Documents belong to their authors.
+2026-10-20。免費開源、離線、本機優先、無帳號／廣告／浮水印／遙測；面向需要私密可編輯心智圖與清楚列印的人。
 
-## Delivery contract
-This initial release implements a complete local editing/print slice, not full XMind parity. Each advanced capability has a separate status in FEATURE_PARITY_MATRIX.md. No inactive AI/collaboration buttons are presented as features.
+交付承諾：本機可用開發版，不等於完整XMind對等或已公證正式發行。核心驗收包含節點／階層／多行繁中、樣式、參照與標註、完整存開與遷移、Undo/Redo、九版面、共用大綱、搜尋專注、任務／簡報、真紙張預覽及PDF。
 
-Core acceptance: create/edit/reparent/reorder, multiline Traditional Chinese, style, undo/redo, atomic native save, reopen, recovery, multi-sheet, outliner, search, focus; shared SVG layout; paper preview; computed readability; selectable/searchable Chromium PDF; import/export round trips. Tests must prove the actual shipped behavior.
+原生v2是唯一無損格式，v1保源遷移；未知欄位／未來版本拒絕。有損Markdown/OPML/FreeMind先警告。原生20MB、10,000節點、128層、50表、文字20,000字元；附件每節點10個各2MB。初始效能範圍1000節點。
 
-## Defaults and limits
-- Traditional Chinese interface, system UI/CJK fonts, cool-white drafting canvas with blue/teal branch palette. Print studio is a first-class workspace with actual paper geometry.
-- Native .openmind JSON v1 is the lossless interchange. Unknown fields/versions are rejected without modifying the source, not silently removed. Markdown/OPML are hierarchy-only with explicit warnings.
-- Max native input 20 MB, 10,000 nodes, 128 levels, 50 sheets; per-topic text 20,000 characters; raster image 2 MB. Initial performance target is 1,000 nodes.
-- Minimum print size target 10 pt; single-page mode remains available with calculated warning. Poster mode deliberately slices with overlap and visible assembly coordinates. Readability mode reflows into indented cards with parent context.
-- No promise of physical printer support for every paper. PDF dimensions are controlled; printer margins and font availability remain platform-dependent.
+繁中介面及Noto字型隨包；三字族、透明／外框／連線／間距、自訂主題及範本。九種結構語意與限制、TeX子集、任務日曆日排程範圍，均見[矩陣](FEATURE_PARITY_MATRIX.md)。
 
-## Planned optional capabilities
-AI requires explicit per-request data consent and replaceable provider, with no network activity by default. Collaboration requires a separate authenticated server and CRDT protocol; no unsafe file-overwrite synchronization. Neither is enabled in this delivery.
+最低主題文字初始目標10pt；單頁或選取fit可顯示真實字級與建議後覆寫。海報刻意跨頁；主要分支自動拆分有續頁及R/S索引。最小字級不適用頁首尾及metadata；不能保證所有內容一張A4皆10pt。
+
+AI與協作需另立明確同意、可替換provider及權限／同步協定，這版未啟用。公開發行仍須[發布準備](RELEASE_READINESS.md)所列硬體／平台／簽署／輔助科技驗收。

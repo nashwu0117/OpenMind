@@ -1,6 +1,7 @@
 import {useEffect, useMemo, useState} from 'react';
 import {ArrowLeft, Printer, FileDown, AlertTriangle, Maximize2, Minimize2} from 'lucide-react';
-import {defaultPrint, papers, planPrint, preparePrintHTML, type PrintSettings, type PrintMode} from '../engine/print';
+import {defaultPrint, papers, planPrint, type PrintSettings, type PrintMode} from '../engine/print';
+import {outputPrint} from '../io/printing';
 import type {Sheet} from '../core/model';
 import {PrintPreview} from './PrintPreview';
 
@@ -50,19 +51,7 @@ export function PrintStudio(p: Props) {
   async function output(pdf: boolean) {
     if (!plan) return; setBusy(true);
     try {
-      const html = await preparePrintHTML(plan);
-      if (window.openmind) {
-        if (pdf) {const result = await window.openmind.pdf({html, name: p.title}); if (result) p.notify(`已輸出 PDF：${result.name}`);}
-        else if (await window.openmind.print({html})) p.notify('已送出列印工作。');
-      } else {
-        const frame = document.createElement('iframe'); frame.className = 'print-frame'; frame.title = '列印文件';
-        const ready = new Promise<void>(resolve => {frame.onload = () => resolve();});
-        frame.srcdoc = html; document.body.appendChild(frame); await ready;
-        await frame.contentDocument!.fonts.ready;
-        await Promise.all([...frame.contentDocument!.images].map(image => image.decode().catch(() => {})));
-        frame.contentWindow!.focus(); frame.contentWindow!.print(); setTimeout(() => frame.remove(), 60000);
-        p.notify('已開啟瀏覽器列印；可選擇「儲存為 PDF」。請關閉瀏覽器頁首頁尾，並保留預覽紙張設定。');
-      }
+      const message=await outputPrint(plan,p.title,pdf);if(message)p.notify(message);
     } catch (error) {p.notify(`輸出失敗：${(error as Error).message}`);} finally {setBusy(false);}
   }
   return <div className={`print-studio${focused ? ' print-focus' : ''}`} role="dialog" aria-label="列印工作室" aria-modal="true">

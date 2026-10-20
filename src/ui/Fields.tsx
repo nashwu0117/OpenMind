@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 export function TextField(p: {
     value: string;
-    onCommit: (v: string) => void;
+    onCommit: (v: string) => void | boolean;
     label: string;
     multiline?: boolean;
     placeholder?: string;
@@ -10,7 +10,7 @@ export function TextField(p: {
         cancel.current = false;
         return;
     } if (draft !== p.value)
-        p.onCommit(draft); }, onKeyDown: (e: React.KeyboardEvent) => { if (e.key === 'Escape') {
+        {if(p.onCommit(draft)===false)setDraft(p.value);} }, onKeyDown: (e: React.KeyboardEvent) => { if (e.nativeEvent.isComposing || e.keyCode === 229) return; if (e.key === 'Escape') {
         cancel.current = true;
         setDraft(p.value);
         (e.target as HTMLElement).blur();

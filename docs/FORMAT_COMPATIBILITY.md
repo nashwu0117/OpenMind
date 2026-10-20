@@ -1,15 +1,18 @@
-# Format compatibility
+# 格式相容性 — 0.3.0
 
-| Format | Import | Export | Preserved | Limitations / tests |
-|---|---|---|---|---|
-| OpenMind v1 JSON | Yes | Yes | All sheets/IDs/text/styles/tasks/images/links/notes/labels/relationships/boundaries | Strict version/unknown-field validation. Unit lossless roundtrip + browser/native file reopen |
-| Markdown | Restricted list/headings | Yes | Active/focused sheet hierarchy + multiline text | Explicit warning; no styles, notes, links metadata, tasks, annotations, images or additional sheets. Arbitrary prose rejected. Unit + browser reimport |
-| OPML 2 | Restricted outline/text attributes | Yes | Hierarchy + multiline Unicode | Extra elements/attributes and DOCTYPE rejected to avoid silent loss. Same limitations as Markdown. Browser roundtrip |
-| SVG | No | Yes | Visible full/focused scene geometry, topic text/style/image, visible relationships/boundaries | Collapsed children excluded from image capture. Notes represented as icon, not full text. No external font embedding; system fallback |
-| PNG | No | Yes | Rasterized scene | Max 12,000px edge / 40 million pixels. Uses local font rasterization; not editable |
-| PDF | No | Yes | Expanded print scope with selected layout/physical pages/vector text | Native Electron output; browser uses print dialog. CJK searchable acceptance on macOS, Type3 vector glyph programs + Unicode mapping; other systems pending. No PDF import |
-| XMind .xmind | No | No | — | No version/ZIP/XML compatibility claim; requires official-format feasibility/corpus/license review |
-| FreeMind .mm | No | No | — | Candidate XML converter not implemented |
-| TextBundle/DOCX/XLSX/PPTX | No | No | — | No empty/mock Office artifacts; converters not implemented |
+| 格式 | 匯入／匯出 | 保存內容 | 限制與驗證 |
+|---|---|---|---|
+| OpenMind v2 | 是／是 | 全表、ID、階層、結構、完整樣式、摘要／關係／外框、任務依賴、簡報順序、筆記標籤連結圖片附件公式貼圖 | 唯一無損編輯格式；單元／瀏覽器／封裝逐欄位往返 |
+| OpenMind v1 | 是／升v2 | 保留原欄位，記憶體補v2預設 | 不改原始檔，另存v2；舊0.2不能讀v2；未知欄位／未來版拒絕 |
+| Markdown | 受限／是 | 階層文字、多行、特殊字元 | 縮排清單／標題，非一般文稿；進階欄位／其他表不含，明示損失 |
+| OPML2 | 受限／是 | 階層文字、多行Unicode | outline/text子集，未知欄位及DTD拒絕；明示損失 |
+| FreeMind .mm | 子集／子集 | 階層、基本字體色彩摺疊、筆記、內外連結、箭頭 | richcontent純文字、圖示／箭頭標題／外觀簡化；未知圖示名留標籤；自由主題成根子節點；任務附件圖片公式摘要及其他表不含；實際往返 |
+| SVG | 否／是 | 可見全圖／專注展開、向量樣式標註圖片公式paths、繁中字型data | 收合隱藏後代不含；筆記圖示；系統備字不重散布；真下載驗證 |
+| PNG | 否／是 | 同SVG可見raster | 12,000px邊／4,000萬像素；非可編輯；真檔驗證 |
+| PDF | 否／是 | 六種圖／大綱策略、任務甘特、16:9簡報，向量與可搜尋繁中 | Type0 Noto400/700實際字型程式；browser/native尺寸內容邊界已驗；非PDF/A，罕字emoji回退 |
+| XMind .xmind | 否／否 | — | 無版本ZIP corpus／轉換器，不宣稱完整相容 |
+| DOCX/XLSX/PPTX/TextBundle | 否／否 | — | 未造假Office；簡報PDF不是PPTX |
 
-Native unsupported versions/fields leave the source untouched; user receives an error. Native limits: 20MB, 10,000 nodes, 128 levels, 50 sheets. Markdown/OPML flatten multiple root topics under one center where needed; Markdown indentation jumps are normalized to the nearest valid parent. This behavior is explicit, not lossless native interchange.
+原生20,000,000 UTF8 bytes、10,000節點、128層、50表；每附件2,000,000解碼bytes、每主題10個。交換文字各2,000,000 UTF8 bytes，輸入輸出一致。失敗保留目前文件與來源；超限交易拒絕並提示。
+
+Markdown多根及跳級縮排正規化為中央階層；OPML多根放中央之下。子集供交換，不是完整備份。圖形輸出不含可編輯工作表資料。[驗證](TEST_PLAN.md)／[限制](BUGS_AND_LIMITATIONS.md)。

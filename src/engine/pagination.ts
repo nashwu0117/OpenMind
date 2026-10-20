@@ -1,6 +1,7 @@
 import {descendants, type Sheet} from '../core/model';
 import {branchSheet, layout, wrapText, type Scene, type PlacedNode} from './layout';
 import type {PrintPage} from './print';
+import {equationGraphic} from './equations';
 
 export type PageArea = {width: number; height: number; minPt: number};
 const LIMIT = 500;
@@ -24,7 +25,7 @@ export function readablePages(sheet: Sheet, area: PageArea, outline = false, lab
     if (!nodes.length) return;
     if (pages.length >= LIMIT) throw new Error('列印超過 500 頁安全上限，請選取較小分支。');
     pages.push({scene: {nodes, edges: [], bounds: {x: 0, y: 0, width: area.width, height: area.height},
-      sheet: {...sheet, nodes: originals, relationships: [], boundaries: []}}, scale: 1, offsetX: 0, offsetY: 0,
+      sheet: {...sheet, nodes: originals, relationships: [], boundaries: [],summaries:[]}}, scale: 1, offsetX: 0, offsetY: 0,
       label: `${label || (outline ? '大綱' : '可讀分頁')} · ${pages.length + 1}`, splitNodes: [], minPt: f * .75,
       topicIds: [...new Set(topicIds)], contextIds: [], references: [], reflow: true});
     nodes = []; originals = {}; topicIds = []; y = 0;
@@ -36,8 +37,9 @@ export function readablePages(sheet: Sheet, area: PageArea, outline = false, lab
     const context = parent ? `〔${sheet.nodes[parent].text.slice(0, 28).replaceAll('\n', ' ')}〕\n` : '';
     const text = outline ? `${'· '.repeat(Math.min(depth, 5))}${node.text}` : context + node.text;
     const lines = wrapText(text, f, area.width - indent - 36);
-    const meta = node.marker || node.labels.length || node.task || node.notes || node.link;
-    const extra = 24 + (meta ? 23 : 0) + (node.image ? 112 : 0);
+    const meta = node.marker || node.sticker || node.attachments.length || node.labels.length || node.task || node.notes || node.link;
+    const equation=equationGraphic(node.equation,area.width-indent-36);
+    const extra = 24 + (meta ? 23 : 0) + (node.image ? 112 : 0) + (equation?equation.height+16:0);
     const maxLines = Math.floor((area.height - extra) / (f * 1.45));
     if (maxLines < 1) throw new Error('紙張無法容納目前字級與圖片，請增加紙張或降低最低字級。');
     for (let start = 0; start < lines.length; start += maxLines) {
