@@ -4,7 +4,7 @@ import path from 'node:path';
 const root=process.cwd(),custom=process.env.OPENMIND_EXECUTABLE,qaDir=path.resolve(process.env.OPENMIND_QA_DIR??'artifacts/phase2');
 const app=await electron.launch({executablePath:custom,args:[...(custom?[]:[root]),`--user-data-dir=${path.join(qaDir,`desktop-profile-${Date.now()}`)}`],timeout:30000});
 try {
-  const page=await app.firstWindow();await page.waitForSelector('[data-node-id]');
+  const page=await app.firstWindow();await expect(page.locator('.library')).toBeVisible();await page.locator('.document-card').first().click();await expect(page).toHaveURL(/#\/map\/[^/]+$/);await page.waitForSelector('[data-node-id]');
   const temporaryRoot=await app.evaluate(({app})=>app.getPath('temp'));
   const {readdir}=await import('node:fs/promises');
   const temporaryBefore=(await readdir(temporaryRoot)).filter(name=>name.startsWith('openmind-print-')).sort();

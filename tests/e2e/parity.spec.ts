@@ -1,7 +1,8 @@
 import {test,expect} from '@playwright/test';
 import {readFile} from 'node:fs/promises';
+import {openSampleMap} from './helpers';
 test('nine structures have actual layouts and structure changes undo without losing nodes',async({page})=>{
-  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));await page.goto('/');await page.waitForLoadState('networkidle');
+  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));await openSampleMap(page);await page.waitForLoadState('networkidle');
   const ids=await page.getByTestId('canvas').locator('[data-node-id]').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('data-node-id')).sort());
   const geometry:Record<string,string>={};for(const structure of ['mindmap','logic','brace','tree','org','timeline','fishbone','matrix','treetable']){await page.getByLabel('圖表結構',{exact:true}).selectOption(structure);await expect(page.getByTestId('canvas').locator('[data-node-id]')).toHaveCount(17);await expect.poll(()=>page.getByTestId('canvas').evaluate(svg=>{const box=svg.getBoundingClientRect();return [...svg.querySelectorAll('[data-node-id]')].every(node=>{const r=node.getBoundingClientRect();return r.left>=box.left-1&&r.right<=box.right+1&&r.top>=box.top-1&&r.bottom<=box.bottom+1;});})).toBe(true);geometry[structure]=await page.getByTestId('canvas').locator('[data-node-id]>rect').evaluateAll(nodes=>JSON.stringify(nodes.map(n=>[n.getAttribute('x'),n.getAttribute('y'),n.getAttribute('width'),n.getAttribute('height')])));}
   for(const structure of ['timeline','matrix','fishbone','treetable'])expect(geometry[structure]).not.toBe(geometry.org);
@@ -10,7 +11,7 @@ test('nine structures have actual layouts and structure changes undo without los
   await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));await page.screenshot({path:'artifacts/audit/matrix.png'});
 });
 test('summaries, vector equations, attachments and full styles survive save/reopen and undo',async({page})=>{
-  await page.goto('/');await page.getByRole('button',{name:'建立選取摘要',exact:true}).click();await page.getByLabel('摘要文字 1',{exact:true}).fill('驗收摘要與依賴');await page.getByLabel('摘要文字 1',{exact:true}).press('Enter');
+  await openSampleMap(page);await page.getByRole('button',{name:'建立選取摘要',exact:true}).click();await page.getByLabel('摘要文字 1',{exact:true}).fill('驗收摘要與依賴');await page.getByLabel('摘要文字 1',{exact:true}).press('Enter');
   await expect(page.getByTestId('canvas').locator('[data-annotation="summary"]')).toHaveCount(1);
   await page.getByText('貼圖、公式與附件',{exact:true}).click();await page.getByLabel('節點貼圖',{exact:true}).selectOption('💡');
   await page.getByLabel('節點公式',{exact:true}).fill('\\frac{a+b}{c}=\\sqrt{2}');await page.getByLabel('節點公式',{exact:true}).press('ControlOrMeta+Enter');
@@ -24,7 +25,7 @@ test('summaries, vector equations, attachments and full styles survive save/reop
   await page.getByRole('button',{name:'刪除摘要 1',exact:true}).click();await expect(page.getByTestId('canvas').locator('[data-annotation="summary"]')).toHaveCount(0);await page.getByRole('button',{name:'復原',exact:true}).click();await expect(page.getByTestId('canvas').locator('[data-annotation="summary"]')).toHaveCount(1);
 });
 test('custom themes and templates are persistent and produce independent documents',async({page})=>{
-  await page.goto('/');await page.getByText('主題與範本',{exact:true}).click();await page.getByLabel('套用主題',{exact:true}).selectOption('forest');await page.getByLabel('自訂主題名稱',{exact:true}).fill('我的森林主題');await page.getByRole('button',{name:'保存目前樣式為主題',exact:true}).click();await expect(page.getByRole('status')).toContainText('已保存自訂主題');
+  await openSampleMap(page);await page.getByText('主題與範本',{exact:true}).click();await page.getByLabel('套用主題',{exact:true}).selectOption('forest');await page.getByLabel('自訂主題名稱',{exact:true}).fill('我的森林主題');await page.getByRole('button',{name:'保存目前樣式為主題',exact:true}).click();await expect(page.getByRole('status')).toContainText('已保存自訂主題');
   await page.getByLabel('範本名稱',{exact:true}).fill('森林範本');await page.getByRole('button',{name:'保存文件為範本',exact:true}).click();await expect(page.getByRole('status')).toContainText('已保存範本');await page.reload();
   await page.getByRole('button',{name:'新增心智圖',exact:true}).click();await page.getByRole('button',{name:'森林範本',exact:true}).click();await expect(page.getByLabel('文件名稱',{exact:true})).toHaveValue('森林範本');await expect(page.getByTestId('canvas').locator('[data-node-id]')).toHaveCount(17);
   await page.getByText('主題與範本',{exact:true}).click();await expect(page.getByLabel('套用主題',{exact:true}).locator('option').filter({hasText:'我的森林主題'})).toHaveCount(1);
@@ -38,7 +39,7 @@ test('task dependencies schedule real dates, detect cycles and undo as one trans
   await page.screenshot({path:'artifacts/audit/tasks-gantt.png'});
 });
 test('presentation navigation is view-only and customized order persists',async({page})=>{
-  await page.goto('/');await expect(page.getByText('已儲存於此裝置',{exact:true})).toBeVisible();const before=await page.evaluate(()=>localStorage.getItem('openmind.recovery.v1'));
+  await openSampleMap(page);await expect(page.getByText('已儲存於此裝置',{exact:true})).toBeVisible();const before=await page.evaluate(()=>localStorage.getItem('openmind.recovery.v1'));
   await page.getByRole('button',{name:'簡報',exact:true}).click();await expect(page.getByTestId('presentation-slide')).toHaveAttribute('data-slide','1');await page.keyboard.press('ArrowRight');await expect(page.getByTestId('presentation-slide')).toHaveAttribute('data-slide','2');
   expect(await page.evaluate(()=>localStorage.getItem('openmind.recovery.v1'))).toBe(before);await page.getByRole('button',{name:'投影片順序',exact:true}).click();await page.getByRole('button',{name:'投影片 2 上移',exact:true}).click();await expect(page.getByTestId('presentation-slide')).toHaveAttribute('data-slide','1');
   await page.screenshot({path:'artifacts/audit/presentation.png'});await page.keyboard.press('Escape');await expect(page.getByRole('dialog',{name:'簡報模式'})).not.toBeVisible();await expect(page.getByText('已儲存於此裝置',{exact:true})).toBeVisible();await page.reload();await page.getByRole('button',{name:'簡報',exact:true}).click();await expect(page.getByTestId('presentation-slide')).toContainText('探索方向');
@@ -62,7 +63,7 @@ test('FreeMind rejects oversized XML structure before rich-content conversion',a
   expect(error).toContain('XML 結構超過安全上限');
 });
 test('expanded focused SVG and PNG export include visible descendants and embedded TC fonts',async({page})=>{
-  await page.goto('/');const canvas=page.getByTestId('canvas');await canvas.locator('[data-node-id]').filter({hasText:'探索方向'}).click();await page.getByRole('button',{name:'收合分支',exact:true}).click();await page.getByRole('button',{name:'預覽選取分支',exact:true}).click();await page.getByRole('button',{name:'展開此分支',exact:true}).click();
+  await openSampleMap(page);const canvas=page.getByTestId('canvas');await canvas.locator('[data-node-id]').filter({hasText:'探索方向'}).click();await page.getByRole('button',{name:'收合分支',exact:true}).click();await page.getByRole('button',{name:'預覽選取分支',exact:true}).click();await page.getByRole('button',{name:'展開此分支',exact:true}).click();
   await page.getByRole('button',{name:'匯出',exact:true}).click();const [svg]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:/^SVG/}).click()]);const text=await readFile((await svg.path())!,'utf8');expect(text.match(/data-node-id=/g)).toHaveLength(4);expect(text).toContain('data:font/woff2;base64,');expect(text).not.toMatch(/url\((?:https?:|\.\/)/);expect(text).toContain('收集靈感與參考');
   await page.getByRole('button',{name:'匯出',exact:true}).click();const [png]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:/^PNG/}).click()]);expect((await readFile((await png.path())!)).subarray(1,4).toString()).toBe('PNG');
 });

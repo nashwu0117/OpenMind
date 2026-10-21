@@ -1,8 +1,9 @@
 import {test, expect} from '@playwright/test';
 import {mkdir, writeFile} from 'node:fs/promises';
+import {openSampleMap} from './helpers';
 
 test('branch preview expands into an editable focused workspace and Escape restores the map', async ({page}) => {
-  await page.goto('/'); const canvas = page.getByTestId('canvas');
+  await openSampleMap(page); const canvas = page.getByTestId('canvas');
   await expect(canvas.locator('[data-node-id]')).toHaveCount(17);
   await canvas.locator('[data-node-id]').filter({hasText: '探索方向'}).click();
   await page.getByRole('button', {name: '收合分支', exact: true}).click();
@@ -32,7 +33,7 @@ test('branch preview expands into an editable focused workspace and Escape resto
 });
 
 test('print preview expands, zooms and navigates without changing physical output', async ({page}) => {
-  await page.goto('/'); await page.getByRole('button', {name: '列印與 PDF', exact: true}).click();
+  await openSampleMap(page); await page.getByRole('button', {name: '列印與 PDF', exact: true}).click();
   await page.getByRole('button', {name: /主要分支分頁/}).click();
   const initial = await page.locator('.print-metrics').textContent();
   await page.getByRole('button', {name: '展開專注預覽', exact: true}).click();

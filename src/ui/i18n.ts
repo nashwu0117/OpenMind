@@ -5,6 +5,20 @@ const storageKey = 'openmind.locale';
 const eventName = 'openmind:locale-change';
 
 const english: Record<string, string> = {
+  '我的心智圖': 'My Mind Maps', '所有心智圖': 'All Mind Maps', '未分類': 'Unfiled', '資料夾': 'Folders',
+  '心智圖資料庫': 'Mind Map Library', '心智圖分類': 'Mind Map Categories', '返回資料庫': 'Back to Library',
+  '新增資料夾': 'New Folder', '重新命名資料夾': 'Rename Folder', '重新命名心智圖': 'Rename Mind Map',
+  '移至資料夾': 'Move to Folder', '移除資料夾': 'Remove Folder', '選擇資料夾': 'Choose a Folder',
+  '資料夾選單：{0}': 'Folder menu: {0}', '心智圖選單：{0}': 'Mind map menu: {0}', '心智圖選單': 'Mind Map Menu', '資料夾選單': 'Folder Menu',
+  '為工作、學習與生活建立資料夾。': 'Create folders for work, learning and life.', '想法留在你的裝置。': 'Your ideas stay on your device.', '離線也能自由整理。': 'Organize freely, even offline.',
+  '整理想法，從這裡開始。': 'A place for your next idea.', '搜尋心智圖檔案': 'Search Mind Map Files', '搜尋心智圖名稱': 'Search mind maps by name', '份心智圖': 'mind maps', '最近更新': 'Last updated',
+  '建立於「{0}」': 'Create in “{0}”', '找不到符合的心智圖': 'No matching mind maps', '這裡準備好迎接新想法了。': 'Ready for your next idea.',
+  '試試其他名稱，或切換到所有心智圖。': 'Try another name, or view all mind maps.', '新增心智圖，或從卡片選單將現有心智圖移到這裡。': 'Create a mind map, or move one here from its card menu.',
+  '在心智圖上按右鍵，或點選 ⋯，即可重新命名、複製與分類。': 'Right-click a mind map or select ⋯ to rename, duplicate or organize it.',
+  '開啟心智圖': 'Open Mind Map', '重新命名': 'Rename', '建立副本': 'Duplicate', '名稱': 'Name', '關閉視窗': 'Close Dialog', '移動': 'Move', '儲存': 'Save', '取消': 'Cancel',
+  '請輸入名稱。': 'Enter a name.', '已有同名資料夾，請使用其他名稱。': 'A folder with this name already exists. Choose another name.',
+  '資料夾內的心智圖會移至「未分類」，所有內容都會保留。': 'Mind maps in this folder will move to Unfiled. All content will be kept.',
+  '找不到這份心智圖，請從資料庫重新開啟。': 'This mind map was not found. Open it again from the library.',
   '繁體中文': '繁體中文', 'English': 'English', '語言': 'Language',
   '我的主題': 'My Topics', '加入附件時已切換工作表，請重新選取附件。': 'The sheet changed while adding the attachment. Select it again.', '附件目標已刪除。': 'The attachment target was deleted.',
   '階層與摘要': 'Hierarchy & Summary', '插入上層主題': 'Insert Parent Topic', '建立選取摘要': 'Create Summary from Selection', '移除': 'Remove', '連結至主題': 'Link to Topic', '選擇文件內的主題': 'Choose a topic in this document',

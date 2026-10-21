@@ -7,7 +7,7 @@ const userData=path.join(qaDir,'desktop-profile');
 const custom=process.env.OPENMIND_EXECUTABLE;
 const application=await electron.launch({executablePath:custom,args:[...(custom?[]:[root]),`--user-data-dir=${userData}`],timeout:30000});
 try{
- const page=await application.firstWindow();await page.waitForSelector('[data-node-id]');
+ const page=await application.firstWindow();await expect(page.locator('.library')).toBeVisible();await page.locator('.document-card').first().click();await expect(page).toHaveURL(/#\/map\/[^/]+$/);await page.waitForSelector('[data-node-id]');
  const updateStatus=await page.evaluate(()=>window.openmind?.getUpdateState());
  expect(['idle','unavailable','unsupported']).toContain(updateStatus?.phase);
  const configuredUpdates=updateStatus?.phase==='idle';

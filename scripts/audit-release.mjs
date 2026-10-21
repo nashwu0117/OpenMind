@@ -6,9 +6,9 @@ const root=process.cwd(),out=path.join(root,'artifacts/audit');await mkdir(out,{
 if(process.env.OPENMIND_EXECUTABLE){
  const app=await electron.launch({executablePath:process.env.OPENMIND_EXECUTABLE,args:[`--user-data-dir=${out}/native-profile-${Date.now()}`],timeout:30000});
  try{
-  const page=await app.firstWindow();await page.waitForSelector('[data-node-id]');const expected=JSON.parse(await readFile(`${out}/release-fixture.openmind`,'utf8'));
+  const page=await app.firstWindow();await expect(page.locator('.library')).toBeVisible();const expected=JSON.parse(await readFile(`${out}/release-fixture.openmind`,'utf8'));
   await app.evaluate(({dialog},file)=>{dialog.showOpenDialog=async()=>({canceled:false,filePaths:[file]});},`${out}/release-fixture.openmind`);
-  await page.getByRole('button',{name:'開啟檔案',exact:true}).click();await expect(page.getByLabel('文件名稱',{exact:true})).toHaveValue(expected.title);
+  await page.getByRole('button',{name:'開啟檔案',exact:true}).click();await expect(page).toHaveURL(/#\/map\/[^/]+$/);await expect(page.getByLabel('文件名稱',{exact:true})).toHaveValue(expected.title);
   const saved=`${out}/native-roundtrip.openmind`;await app.evaluate(({dialog},file)=>{dialog.showSaveDialog=async()=>({canceled:false,filePath:file});},saved);await page.getByRole('button',{name:'儲存檔案',exact:true}).click();await expect(page.getByRole('status')).toContainText('檔案已儲存');expect(JSON.parse(await readFile(saved,'utf8'))).toEqual(expected);
   const outputs=[];
   async function pdf(name,button){await app.evaluate(({dialog},file)=>{dialog.showSaveDialog=async()=>({canceled:false,filePath:file});},`${out}/native-${name}.pdf`);await page.getByRole('button',{name:button,exact:true}).click();await expect(page.getByRole('status')).toContainText(`已輸出 PDF：native-${name}.pdf`,{timeout:45000});outputs.push(name);}

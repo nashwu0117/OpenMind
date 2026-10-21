@@ -1,14 +1,15 @@
 import { test, expect } from '@playwright/test';
+import { openSampleMap } from './helpers';
 
 const nodes = (page: import('@playwright/test').Page) => page.getByTestId('canvas').locator('[data-node-id]');
 
 test('two open editors cannot silently replace another window’s saved topic change', async ({ page, context }) => {
-  await page.goto('/');
+  await openSampleMap(page);
   await expect(nodes(page)).toHaveCount(17);
   await expect(page.getByText('已儲存於此裝置', { exact: true })).toBeVisible();
 
   const second = await context.newPage();
-  await second.goto('/');
+  await openSampleMap(second);
   await expect(nodes(second)).toHaveCount(17);
   await expect(second.getByRole('status')).toContainText('另一個 OpenMind 視窗正在編輯');
   await expect(second.getByLabel('節點文字', { exact: true })).toBeDisabled();
@@ -46,7 +47,7 @@ test('when cross-window locking is unavailable, editing fails closed without aut
   const context = await browser.newContext();
   await context.addInitScript(() => Object.defineProperty(navigator, 'locks', { configurable: true, value: undefined }));
   const page = await context.newPage();
-  await page.goto('/');
+  await openSampleMap(page);
   await expect(page.getByRole('status')).toContainText('本視窗以唯讀方式開啟');
   await expect(page.getByLabel('節點文字', { exact: true })).toBeDisabled();
   await page.close();

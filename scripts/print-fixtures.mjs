@@ -1,9 +1,9 @@
-import {chromium} from '@playwright/test';
+import {chromium,expect} from '@playwright/test';
 import {mkdir,writeFile} from 'node:fs/promises';
 await mkdir('artifacts/print-fixtures',{recursive:true});
 const browser=await chromium.launch({headless:true});
 try{
- const app=await browser.newPage({viewport:{width:1480,height:960}});await app.goto('http://127.0.0.1:5187');await app.waitForLoadState('networkidle');await app.screenshot({path:'artifacts/full-editor.png'});
+ const app=await browser.newPage({viewport:{width:1480,height:960}});await app.goto('http://127.0.0.1:5187');await app.waitForLoadState('networkidle');await expect(app.locator('.library')).toBeVisible();await app.locator('.document-card').first().click();await expect(app).toHaveURL(/#\/map\/[^/]+$/);await expect(app.getByTestId('canvas').locator('[data-node-id]')).toHaveCount(17);await app.screenshot({path:'artifacts/full-editor.png'});
  const cases=[{count:10,mode:'fit'},{count:50,mode:'branches'},{count:200,mode:'readable'},{count:1000,mode:'outline'},{count:200,mode:'poster'},{count:50,mode:'selection'},{count:10,mode:'fit',rich:true,monochrome:true}];
  const manifest=[];
  for(const c of cases){

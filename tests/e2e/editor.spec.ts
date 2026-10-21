@@ -1,9 +1,10 @@
 import { test, expect, type Page } from '@playwright/test';
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
+import { openSampleMap } from './helpers';
 const nodes = (p: Page) => p.getByTestId('canvas').locator('[data-node-id]');
 async function blank(p: Page) { await p.getByRole('button', { name: '新增心智圖', exact: true }).click(); await p.getByRole('button', { name: '空白心智圖' }).click(); await expect(nodes(p)).toHaveCount(1); await nodes(p).first().click(); }
 async function enterTopic(p: Page, key: string, text: string) { await p.keyboard.press(key); await p.getByRole('textbox', { name: '編輯主題文字', exact: true }).fill(text); await p.getByRole('button', { name: '完成編輯' }).click(); }
-test.beforeEach(async ({ page }) => { await page.goto('/'); await expect(nodes(page)).toHaveCount(17); });
+test.beforeEach(async ({ page }) => { await openSampleMap(page); await expect(nodes(page)).toHaveCount(17); });
 test('language switch translates the main UI and survives a reload', async ({ page }) => {
     const language = page.locator('.language-control select');
     await expect(language).toHaveValue('zh-TW');
