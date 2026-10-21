@@ -1,8 +1,8 @@
-# 功能完成度與對標矩陣 — 0.3.0
+# 功能完成度與對標矩陣 — 0.3.1 RC
 
 官方查核：2026-10-20 Pacific/Auckland。[XMind功能](https://xmind.com/features/)、[主題編輯](https://xmind.com/user-guide/topic-editing-new)、[進階功能](https://xmind.com/user-guide/advanced-features)、[平台差異](https://xmind.com/help/feature-differences-across-platforms)。平台能力不同，以公開行為對標，不複製專有資產。
 
-狀態：NOT STARTED／IN PROGRESS／IMPLEMENTED／TESTED／VERIFIED／BLOCKED。VERIFIED僅指所列OpenMind條件在macOS／Chromium實際驗收，不代表完整XMind對等。U=101單元，E=34E2E，L=36版面規模測例，P=實際PDF，N=封裝原生；命令見[TEST_PLAN](TEST_PLAN.md)，Dxx見[稽核](COMPLETION_AUDIT.md)，Bxx見[限制](BUGS_AND_LIMITATIONS.md)。
+本表保留 0.3 核心功能驗收證據；本 RC 新增的雙視窗、匯入安全、效能、依賴與封裝驗收，以及發布判定，以[0.3.1 RC 發布準備報告](RELEASE_READINESS.md)為準。狀態：NOT STARTED／IN PROGRESS／IMPLEMENTED／TESTED／VERIFIED／BLOCKED。VERIFIED 僅指列出的 OpenMind 條件在 macOS／Chromium 實際驗收，不代表完整 XMind 對等。U=101 單元，E=34 E2E（0.3.0 基線；本 RC 為 37），L=36 版面規模測例，P=實際 PDF，N=封裝原生；命令見[TEST_PLAN](TEST_PLAN.md)，Dxx 見[稽核](COMPLETION_AUDIT.md)，Bxx 見[限制](BUGS_AND_LIMITATIONS.md)。
 
 | ID／類別 | 功能 | 目前實作 | 缺陷／限制 | 預期行為／驗收條件 | 實際結果 | 狀態 |
 |---|---|---|---|---|---|---|

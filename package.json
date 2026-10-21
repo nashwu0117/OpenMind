@@ -1,6 +1,6 @@
 {
   "name": "openmind",
-  "version": "0.3.0",
+  "version": "0.3.2",
   "private": true,
   "description": "Offline-first, print-first open-source mind mapping",
   "license": "Apache-2.0",
@@ -14,6 +14,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "test:desktop": "node scripts/desktop-smoke.mjs",
+    "test:updater": "node --test tests/updater.test.cjs",
     "package": "npm run build && node scripts/package.mjs",
     "dist:desktop": "npm run package",
     "licenses": "node scripts/licenses.mjs"
@@ -26,6 +27,7 @@
     "react-dom": "19.3.1"
   },
   "devDependencies": {
+    "@electron/osx-sign": "2.7.1",
     "@playwright/test": "1.64.1",
     "@types/node": "^24.0.0",
     "@types/react": "^19.0.0",

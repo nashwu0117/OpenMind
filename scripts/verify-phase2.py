@@ -1,8 +1,8 @@
-import json, re, struct, sys
+import json, os, re, struct, sys
 from pathlib import Path
 import pymupdf as fitz
 
-folder=Path('artifacts/phase2')
+folder=Path(os.environ.get('OPENMIND_QA_DIR','artifacts/phase2'))
 manifest=json.loads((folder/'manifest.json').read_text())
 pdf_name=sys.argv[1] if len(sys.argv)>1 else 'branches-cjk-relations.pdf'
 doc=fitz.open(folder/pdf_name)

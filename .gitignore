@@ -8,3 +8,5 @@ artifacts/
 *.log
 *.tsbuildinfo
 .vitest/
+assets/openmind-icon-1024.png
+assets/OpenMind.icns

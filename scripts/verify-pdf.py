@@ -1,12 +1,14 @@
 """Run with Python + PyMuPDF (pip install pymupdf) after desktop/E2E tests."""
 import json
+import os
 from pathlib import Path
 import pymupdf as fitz
 import re
 
+folder=Path(os.environ.get('OPENMIND_QA_DIR','artifacts'))
 reports=[]
 for name,phrase in [('browser-cjk.pdf','離線繁體中文 PDF 驗收'),('desktop-cjk.pdf','桌面繁體中文 PDF 驗收')]:
-    pdf=fitz.open(Path('artifacts')/name)
+    pdf=fitz.open(folder/name)
     assert len(pdf)==1, f'{name}: unexpected page count {len(pdf)}'
     page=pdf[0]
     assert abs(page.rect.width-210/25.4*72)<1, page.rect
@@ -44,7 +46,7 @@ for name,phrase in [('browser-cjk.pdf','離線繁體中文 PDF 驗收'),('deskto
                 assert 0<=x0<x1<=page.rect.width+1, span
                 assert 0<=y0<y1<=page.rect.height+1, span
     assert phrase_line_found
-    page.get_pixmap(matrix=fitz.Matrix(1.2,1.2)).save(str(Path('artifacts')/name.replace('.pdf','-render.png')))
+    page.get_pixmap(matrix=fitz.Matrix(1.2,1.2)).save(str(folder/name.replace('.pdf','-render.png')))
     reports.append({'file':name,'pages':len(pdf),'page_points':[page.rect.width,page.rect.height],'searchable_cjk':True,'fonts':embedded,'all_text_inside_page':True})
-Path('artifacts/pdf-verification.json').write_text(json.dumps(reports,ensure_ascii=False,indent=2))
+folder.joinpath('pdf-verification.json').write_text(json.dumps(reports,ensure_ascii=False,indent=2))
 print(json.dumps(reports,ensure_ascii=False,indent=2))

@@ -1,91 +1,73 @@
-# OpenMind
+<p align="center">
+  <img src="assets/openmind-icon.svg" width="148" alt="OpenMind 圖示">
+</p>
 
-自由思考，清晰呈現。免費、開源、離線優先的心智圖編輯器，將可讀性與列印品質放在核心。
+<h1 align="center">OpenMind</h1>
 
-目前為 **0.3.0 開發版**：補齊九種圖表、摘要／附件／向量公式、個人主題範本、真實任務甘特圖與簡報 PDF；修正資料與操作可靠性，保留繁中嵌字型、主要分支分頁及兩種可展開的專注預覽。101 單元、34 E2E 與實際 PDF 驗收通過。正式公開發布尚未就緒，詳見 [完整稽核](docs/COMPLETION_AUDIT.md)、[功能矩陣](docs/FEATURE_PARITY_MATRIX.md)、[發布準備](docs/RELEASE_READINESS.md)。
+<p align="center">
+  <strong>自由思考，清晰呈現。</strong><br>
+  免費、開源、離線優先的心智圖編輯器，為清楚整理想法與可讀列印而設計。
+</p>
 
-## 已實作功能
+<p align="center">
+  <a href="README.en.md">English</a> ·
+  <a href="https://github.com/nashwu0117/OpenMind/releases">下載 macOS 版本</a>
+</p>
 
-- 新增／多行編輯／複製／剪下／貼上／刪除節點，拖曳改變階層、同層重排、展開收合與自由主題。
-- 多選批次樣式、形狀／文字／色彩、筆記／標籤／安全連結、標記、內嵌圖片、Unicode 貼圖、可下載附件及離線 MathJax 向量公式。
-- 縮放／平移／適應視窗、分支聚焦、全文搜尋、同步可編輯大綱、唯讀與深色介面。
-- 交易式 Undo／Redo、IndexedDB 本機自動復原、最近八份文件、多工作表、自訂主題及文件範本。
-- 版本化 `.openmind` JSON，原生桌面對話框及暫存寫入後原子替換。v1 保源升級至 v2；SVG／PNG 嵌繁中字型，Markdown／OPML／FreeMind 子集匯入匯出明示損失。
-- 心智圖、邏輯圖、括號圖、樹狀圖、組織圖、順序時間軸、魚骨圖、矩陣與樹表；關係線、外框及選取摘要。
-- 真實任務日期／狀態／持續時間／相依性，循環檢查與日曆日排程、甘特圖和 PDF；簡報排序、播放、導航、全螢幕及 16:9 PDF。
-- 六種列印策略：單頁、可讀分頁、海報拼接、主要分支自動分頁、選取子樹、大綱。A4／A3／A2／Letter／Legal／自訂紙張、方向／邊界／頁首尾／頁碼／黑白。實際頁數、比例與字級警告。
-- Noto Sans TC 靜態字重隨程式提供，PDF 內嵌 Type0／TrueType 字型程式，繁體中文可搜尋；跨頁關係有雙向頁碼、續頁與完整索引。Electron 原生輸出 PDF，瀏覽器可透過列印另存。
-- 選取分支可先預覽再展開成專注編輯；列印預覽可收起設定、放大／縮小與跳頁，並已比對實際 UI 預覽和 PDF。
+<p align="center">
+  <img src="docs/images/openmind-zh-TW.jpg" alt="OpenMind 繁體中文介面與心智圖範例" width="100%">
+</p>
 
-## 安裝與啟動
+OpenMind 是專注於內容清晰度與列印品質的桌面心智圖工具。繁體中文和英文介面都可在應用程式內切換；語言偏好保存在本機，不會翻譯或改寫你的節點內容。
 
-需要 Node.js 24 LTS（或符合 Vite 8 要求的較新版本）、npm。初次安裝套件與 Electron 執行環境需要網路；完成封裝後，編輯與列印不需網路或帳號。
+## 下載與安裝
+
+[前往 GitHub Releases 查看可下載版本](https://github.com/nashwu0117/OpenMind/releases)。請先查看各版本說明列出的處理器架構與簽署狀態。安裝 DMG 時，打開磁碟映像並將 OpenMind 拖到「Applications／應用程式」資料夾。
+
+目前的 macOS 預覽版使用 ad-hoc 簽章，尚未經 Apple 公證；不需要 Apple Developer ID 憑證。首次開啟時系統可能會阻擋。確認下載來源是本專案的 GitHub Release 後，可在「系統設定 → 隱私權與安全性 → 仍要打開」為 OpenMind 個別允許；不需要整體停用 Gatekeeper。
+
+## 為什麼使用 OpenMind
+
+- **專注整理想法：** 九種圖表結構、自由主題、多層分支、同步大綱、搜尋、任務時間軸與簡報模式。
+- **列印後仍然可讀：** 六種分頁策略、繁中字型內嵌 PDF、跨頁關係提示與列印前預覽。
+- **資料留在本機：** 不需要帳號；文件以本機檔案或瀏覽器本機儲存管理。應用程式不含廣告或遙測。
+- **方便攜出：** 支援 `.openmind` 原生文件，並提供 Markdown、OPML 與 FreeMind 子集匯入匯出，以及 SVG／PNG 圖片輸出。
+- **中英文介面：** 切換介面語言不會改寫文件文字或列印內容。
+
+## 更新
+
+桌面版提供手動檢查更新的入口。公開更新來源已設定；下載、簽署驗證、安裝與重新啟動的完整流程，仍須在正式簽署的公開版本完成端對端驗收。各版本的實際狀態會列在 [Release 說明](https://github.com/nashwu0117/OpenMind/releases)。
+
+## 從原始碼執行
+
+需要 Node.js 24 LTS（或符合 Vite 8 要求的較新版本）與 npm。第一次安裝相依套件和 Electron 執行環境需要網路；完成後，編輯與列印可離線使用。
 
 ```sh
 npm ci
 npm run dev
 ```
 
-瀏覽器開啟 `http://127.0.0.1:5187`。桌面版：
+瀏覽器開啟 `http://127.0.0.1:5187`。要執行桌面版：
 
 ```sh
 npm run desktop
 ```
 
-Electron 若尚未下載執行環境，第一次啟動會自動下載。所有文件都只在本機，不含遙測、廣告、登入限制或付費 API。
-
-## 操作
-
-選取節點後，Tab 新增子主題、Enter 新增同層、雙擊或 F2 編輯、Shift+Enter 換行。⌘／Ctrl+Z 復原、Shift+⌘／Ctrl+Z 重做；C／X／V 複製、剪下、貼上分支；S 儲存、Shift+S 另存。Shift 點選多選，拖曳到其他節點改變父層，按住 Option／Alt 拖曳插入該節點同層前方。一般滾輪平移，⌘／Ctrl+滾輪縮放。
-
-「列印與 PDF」顯示實際紙張預覽。大型圖可選「主要分支自動分頁」或「可讀分頁」維持主題字級，或「海報拼接」保留空間配置。後者刻意跨頁，依列／欄與重疊區接合。單頁／選取子樹可能低於最低字級，介面會顯示計算值與建議。最低設定針對主要主題文字，頁首尾和小型中繼資料可能更小。
-
-需要更專注時：選取節點 → 眼睛圖示「預覽選取分支」→「展開此分支」；Escape 返回原工作區。F9 或「專注」可直接收起編輯側欄。列印時按「專注預覽」，以縮放、頁碼選擇或左右鍵檢查；Escape 返回列印設定。這些視圖操作不修改原始文件。
-
-請另存 `.openmind` 作為可靠備份；本機快取會受儲存容量與清除資料影響。桌面版開啟文件後第一次儲存會請你確認目的地，避免誤覆寫其他文件。
-
-## 測試與建置
+## 測試
 
 ```sh
 npm test
+npm run test:updater
 npm run build
 npx playwright install chromium
 npm run test:e2e
 npm run test:desktop
-node scripts/print-fixtures.mjs  # 需要 dev server
 ```
 
-PDF 內容／字型／尺寸驗收需要 Python + PyMuPDF：
+列印 PDF、字型與版面驗收方式見[測試計畫](docs/TEST_PLAN.md)及[列印引擎說明](docs/PRINT_ENGINE.md)。
 
-```sh
-python3 -m venv /tmp/openmind-qa
-/tmp/openmind-qa/bin/pip install pymupdf pillow
-/tmp/openmind-qa/bin/python scripts/verify-pdf.py
-/tmp/openmind-qa/bin/python scripts/verify-fixtures.py
-/tmp/openmind-qa/bin/python scripts/compare-preview.py
-node scripts/verify-print-ui.mjs
-node scripts/desktop-print-phase2.mjs
-/tmp/openmind-qa/bin/python scripts/verify-phase2.py
-/tmp/openmind-qa/bin/python scripts/verify-phase2.py desktop-branches.pdf
-/tmp/openmind-qa/bin/python scripts/verify-bulk.py
-/tmp/openmind-qa/bin/python scripts/compare-print-ui.py
-```
+## 文件與限制
 
-驗收產物在 `artifacts/`（不提交），瀏覽器 trace 在 `test-results/`。目前結果見 [0.3 完整稽核](docs/COMPLETION_AUDIT.md) 及 [完整驗收命令](docs/TEST_PLAN.md)；[0.2](docs/PHASE2_VERIFICATION.md)／[0.1](docs/VERIFICATION.md)保留歷史範圍。新增三類 PDF 可用 `node scripts/audit-release.mjs` 生成，並用 `scripts/verify-audit.py` 驗證。原生 PDF 測試可用 `OPENMIND_EXECUTABLE` 指向封裝成品。
+[產品規格](docs/PRODUCT_SPEC.md) · [架構](docs/ARCHITECTURE.md) · [格式相容性](docs/FORMAT_COMPATIBILITY.md) · [發布準備報告](docs/RELEASE_READINESS.md) · [已知限制](docs/KNOWN_LIMITATIONS.md) · [貢獻指南](CONTRIBUTING.md) · [安全政策](SECURITY.md) · [更新與 macOS 發布設定](docs/RELEASING.md)
 
-## 封裝
-
-```sh
-npm run licenses
-npm run package
-```
-
-使用已安裝的 Electron 執行環境，產生目前平台的開發套件於 `release/<version>/<platform>-<arch>/`，本版為 `release/0.3.0/darwin-arm64/`。macOS 為 `OpenMind.app`，有本機 ad-hoc 簽章；尚無 notarization、DMG／安裝器或自動更新。腳本拒絕覆寫既有套件。Windows／Linux 分支需在對應平台另外驗收。原始碼保持 TypeScript／React／SVG／Electron 分層，無 Rust 前置需求。
-
-## 文件與授權
-
-[產品規格](docs/PRODUCT_SPEC.md) · [架構](docs/ARCHITECTURE.md) · [列印引擎](docs/PRINT_ENGINE.md) · [格式相容性](docs/FORMAT_COMPATIBILITY.md) · [測試計畫](docs/TEST_PLAN.md) · [路線圖](docs/ROADMAP.md) · [貢獻指南](CONTRIBUTING.md) · [安全政策](SECURITY.md)
-
-Apache-2.0，選擇原因是允許自由使用、修改與散布，並包含明確專利授權。原目錄沒有既有 LICENSE。第三方程式碼保留各自授權，見 [第三方聲明](THIRD_PARTY_NOTICES.md)。無 XMind 專有程式碼、圖示、商標素材或付費資產。
-
-尚未支援 `.xmind`、Office／TextBundle、混合分支結構、完整工作日曆、AI 推理、多人協作及永久版本歷史。FreeMind 是受限子集；無正式公證、跨平台或實體印表機驗收，不宣稱完全相容或功能對等。
+OpenMind 目前不支援 `.xmind`、Office 文件、多人協作或 AI 服務；FreeMind 僅支援文件列出的子集。請查看[格式相容性](docs/FORMAT_COMPATIBILITY.md)與[已知限制](docs/KNOWN_LIMITATIONS.md)，確認工作流程所需的功能。

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" fill="none">
+  <defs>
+    <linearGradient id="night" x1="96" y1="80" x2="928" y2="944" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#24505B"/>
+      <stop offset="1" stop-color="#10233B"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="matrix(0 442 -442 0 512 412)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3D7780" stop-opacity=".64"/>
+      <stop offset="1" stop-color="#3D7780" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="branch" x1="256" y1="290" x2="770" y2="730" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8CE1CE"/>
+      <stop offset="1" stop-color="#67C8BB"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="28" y="28" width="968" height="968" rx="224" fill="url(#night)"/>
+  <rect x="28" y="28" width="968" height="968" rx="224" fill="url(#glow)"/>
+
+  <!-- Four flowing paths turn the usual node graph into an open field of ideas. -->
+  <g stroke="url(#branch)" stroke-linecap="round" stroke-linejoin="round" stroke-width="31">
+    <path d="M427 450c-43-43-78-90-128-111-25-10-50-9-76 1"/>
+    <path d="M587 449c42-42 81-91 132-111 26-10 51-8 76 3"/>
+    <path d="M426 573c-44 44-80 91-130 111-25 10-49 8-75-3"/>
+    <path d="M588 574c43 44 81 91 132 111 25 10 49 8 75-3"/>
+  </g>
+
+  <!-- Topic cards: the tiny ink strokes stay legible at Dock size. -->
+  <g>
+    <g transform="rotate(-8 220 321)">
+      <rect x="148" y="266" width="144" height="110" rx="30" fill="#F5F0E5"/>
+      <circle cx="178" cy="300" r="8" fill="#D99552"/>
+      <path d="M198 300h63M174 333h82" stroke="#274956" stroke-linecap="round" stroke-width="11"/>
+    </g>
+    <g transform="rotate(7 808 321)">
+      <rect x="736" y="266" width="144" height="110" rx="30" fill="#F5F0E5"/>
+      <circle cx="766" cy="300" r="8" fill="#63BBAF"/>
+      <path d="M786 300h63M762 333h82" stroke="#274956" stroke-linecap="round" stroke-width="11"/>
+    </g>
+    <g transform="rotate(7 220 703)">
+      <rect x="148" y="648" width="144" height="110" rx="30" fill="#F5F0E5"/>
+      <circle cx="178" cy="682" r="8" fill="#63BBAF"/>
+      <path d="M198 682h63M174 715h82" stroke="#274956" stroke-linecap="round" stroke-width="11"/>
+    </g>
+    <g transform="rotate(-7 808 703)">
+      <rect x="736" y="648" width="144" height="110" rx="30" fill="#F5F0E5"/>
+      <circle cx="766" cy="682" r="8" fill="#D99552"/>
+      <path d="M786 682h63M762 715h82" stroke="#274956" stroke-linecap="round" stroke-width="11"/>
+    </g>
+  </g>
+
+  <!-- The central compass-like spark marks the idea in focus. -->
+  <circle cx="512" cy="512" r="119" fill="#F5F0E5"/>
+  <circle cx="512" cy="512" r="99" fill="#EFB56A"/>
+  <path d="M512 430c13 49 21 62 70 82-49 13-62 21-70 82-13-49-21-62-70-82 49-13 62-21 70-82Z" fill="#FFF8EB"/>
+  <circle cx="512" cy="512" r="12" fill="#24505B"/>
+</svg>

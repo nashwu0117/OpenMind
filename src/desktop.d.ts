@@ -1,4 +1,11 @@
 export {};
+export type UpdateStatus = {
+    phase: 'idle' | 'unsupported' | 'unavailable' | 'checking' | 'current' | 'downloading' | 'downloaded' | 'installing' | 'error';
+    currentVersion: string;
+    availableVersion?: string;
+    progress?: number;
+    message: string;
+};
 declare global {
     interface Window {
         openmind?: {
@@ -23,6 +30,12 @@ declare global {
                 html: string;
             }) => Promise<boolean>;
             openLink: (url: string) => Promise<void>;
+            setLocale: (locale: 'zh-TW' | 'en') => Promise<'zh-TW' | 'en'>;
+            getUpdateState: () => Promise<UpdateStatus>;
+            checkForUpdates: () => Promise<UpdateStatus>;
+            installUpdate: () => Promise<boolean>;
+            onUpdateState: (callback: (status: UpdateStatus) => void) => () => void;
+            onOpenUpdates: (callback: () => void) => () => void;
         };
     }
 }

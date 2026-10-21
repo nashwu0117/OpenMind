@@ -3,6 +3,7 @@ import { Crosshair, Minus, Plus, Scan, MousePointer2, Hand, SquareDashed } from 
 import { FONT, layout, type Scene } from '../engine/layout';
 import { sceneMarkup } from '../engine/svg';
 import type { Sheet } from '../core/model';
+import {t} from './i18n';
 type Props = {
     sheet: Sheet;
     focus: string;
@@ -52,8 +53,8 @@ export function Canvas(p: Props) {
     const nodeAt = (target: EventTarget | null) => target instanceof Element ? target.closest('[data-node-id]')?.getAttribute('data-node-id') ?? '' : '';
     const markup = useMemo(() => sceneMarkup(scene, { interactive: true, selected: p.selected }), [scene, p.selected]);
     return <div className={'canvas-host' + (hand ? ' hand' : marquee?' marquee':'')} ref={host}>
-  <div className="canvas-caption"><span className="live-dot"/>本機工作空間 <span>／</span> {p.focus === p.sheet.rootId ? '自由思考，清晰展開' : '專注分支'}</div>
-  <svg ref={svg} className="map-canvas" aria-label="心智圖畫布" data-testid="canvas" style={{ fontFamily: FONT }} viewBox={`${view.x} ${view.y} ${size.width / view.scale} ${size.height / view.scale}`} onWheel={e => { e.preventDefault(); const r = e.currentTarget.getBoundingClientRect(); if (e.ctrlKey || e.metaKey)
+  <div className="canvas-caption"><span className="live-dot"/>{t("本機工作空間 ")}<span>／</span> {p.focus === p.sheet.rootId ? t('自由思考，清晰展開') : t('專注分支')}</div>
+  <svg ref={svg} className="map-canvas" aria-label={t("心智圖畫布")} data-testid="canvas" style={{ fontFamily: FONT }} viewBox={`${view.x} ${view.y} ${size.width / view.scale} ${size.height / view.scale}`} onWheel={e => { e.preventDefault(); const r = e.currentTarget.getBoundingClientRect(); if (e.ctrlKey || e.metaKey)
         zoom(Math.exp(-e.deltaY * 0.006), e.clientX - r.left, e.clientY - r.top);
     else
         setView(v => ({ ...v, x: v.x + e.deltaX / v.scale, y: v.y + e.deltaY / v.scale })); }} onPointerDown={e => { if (e.button !== 0 && e.button !== 1)
@@ -85,7 +86,7 @@ export function Canvas(p: Props) {
    {selectionBox&&<rect data-testid="selection-marquee" x={selectionBox.x} y={selectionBox.y} width={selectionBox.width} height={selectionBox.height} fill="#3263ce" fillOpacity=".08" stroke="#3263ce" strokeWidth={1.5/view.scale} pointerEvents="none"/>}
    {target && (() => { const n = scene.nodes.find(n => n.id === target); return n ? <rect x={n.x - 7} y={n.y - 7} width={n.width + 14} height={n.height + 14} rx="14" fill="none" stroke="#11938a" strokeWidth="3" strokeDasharray="5 3" pointerEvents="none"/> : null; })()}
   </svg>
-  <div className="canvas-help">Tab 新增子主題 <i /> Enter 新增同層 <i /> 雙擊編輯 <i /> 拖曳改變階層 · ⌥ 拖曳插入同層</div>
-  <div className="canvas-controls"><button aria-label="選取工具" className={!hand&&!marquee ? 'active' : ''} onClick={() => {setHand(false);setMarquee(false);}}><MousePointer2 size={17}/></button><button aria-label="平移工具" className={hand ? 'active' : ''} onClick={() => {setHand(true);setMarquee(false);}}><Hand size={17}/></button><button aria-label="框選工具" aria-pressed={marquee} className={marquee?'active':''} onClick={()=>{setHand(false);setMarquee(true);}}><SquareDashed size={17}/></button><span className="divider"/><button aria-label="縮小" onClick={() => zoom(1 / 1.2)}><Minus size={17}/></button><span className="zoom-label">{Math.round(view.scale * 100)}%</span><button aria-label="放大" onClick={() => zoom(1.2)}><Plus size={17}/></button><span className="divider"/><button aria-label="適應整張心智圖" title="適應整張心智圖" onClick={fit}><Scan size={17}/></button><button aria-label="返回中央" title="返回中央" onClick={() => { const n = scene.nodes.find(n => n.id === p.focus)!; setView(v => ({ ...v, x: n.x + n.width / 2 - size.width / v.scale / 2, y: n.y + n.height / 2 - size.height / v.scale / 2 })); }}><Crosshair size={17}/></button></div>
+  <div className="canvas-help">{t("Tab 新增子主題 ")}<i /> {t(" Enter 新增同層 ")}<i /> {t(" 雙擊編輯 ")}<i /> {t(" 拖曳改變階層 · ⌥ 拖曳插入同層")}</div>
+  <div className="canvas-controls"><button aria-label={t("選取工具")} className={!hand&&!marquee ? 'active' : ''} onClick={() => {setHand(false);setMarquee(false);}}><MousePointer2 size={17}/></button><button aria-label={t("平移工具")} className={hand ? 'active' : ''} onClick={() => {setHand(true);setMarquee(false);}}><Hand size={17}/></button><button aria-label={t("框選工具")} aria-pressed={marquee} className={marquee?'active':''} onClick={()=>{setHand(false);setMarquee(true);}}><SquareDashed size={17}/></button><span className="divider"/><button aria-label={t("縮小")} onClick={() => zoom(1 / 1.2)}><Minus size={17}/></button><span className="zoom-label">{Math.round(view.scale * 100)}%</span><button aria-label={t("放大")} onClick={() => zoom(1.2)}><Plus size={17}/></button><span className="divider"/><button aria-label={t("適應整張心智圖")} title={t("適應整張心智圖")} onClick={fit}><Scan size={17}/></button><button aria-label={t("返回中央")} title={t("返回中央")} onClick={() => { const n = scene.nodes.find(n => n.id === p.focus)!; setView(v => ({ ...v, x: n.x + n.width / 2 - size.width / v.scale / 2, y: n.y + n.height / 2 - size.height / v.scale / 2 })); }}><Crosshair size={17}/></button></div>
  </div>;
 }

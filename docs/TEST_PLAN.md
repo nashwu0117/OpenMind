@@ -1,6 +1,6 @@
-# 測試計畫與實際結果 — 0.3.0
+# 測試計畫與實際結果 — 0.3.0 歷史範圍
 
-驗收日期2026-10-20，macOS arm64／Node24／Chromium與Electron。資料均為合成測例，原生使用隔離設定檔。格式或分頁修改需重產PDF，不能由檔案存在推定成功。
+以下表格保留 0.3.0 的基線測試範圍；0.3.1 RC 的最終實際結果、37 項 E2E、PDF 檢查、效能量測及發布判定，以[發布準備報告](RELEASE_READINESS.md)為準。驗收日期 2026-10-20，macOS arm64／Node 24／Chromium 與 Electron。資料均為合成測例，原生使用隔離設定檔。格式或分頁修改需重產 PDF，不能由檔案存在推定成功。
 
 | 測試來源 | 驗收內容 | 本次結果 |
 |---|---|---|
@@ -47,16 +47,17 @@ OPENMIND_EXECUTABLE=release/0.3.0/darwin-arm64/OpenMind.app/Contents/MacOS/OpenM
 封裝不覆寫既有成品，請先保留或另存。PDF QA依賴不加入產品runtime：
 
 ```sh
-python3 -m venv /tmp/openmind-qa
-/tmp/openmind-qa/bin/pip install pymupdf pillow
-/tmp/openmind-qa/bin/python scripts/verify-audit.py
-/tmp/openmind-qa/bin/python scripts/verify-pdf.py
-/tmp/openmind-qa/bin/python scripts/verify-fixtures.py
-/tmp/openmind-qa/bin/python scripts/compare-preview.py
-/tmp/openmind-qa/bin/python scripts/verify-phase2.py
-/tmp/openmind-qa/bin/python scripts/verify-phase2.py desktop-branches.pdf
-/tmp/openmind-qa/bin/python scripts/verify-bulk.py
-/tmp/openmind-qa/bin/python scripts/compare-print-ui.py
+QA_VENV="$(mktemp -d)/venv"
+python3 -m venv "$QA_VENV"
+"$QA_VENV/bin/pip" install pymupdf pillow
+"$QA_VENV/bin/python" scripts/verify-audit.py
+"$QA_VENV/bin/python" scripts/verify-pdf.py
+"$QA_VENV/bin/python" scripts/verify-fixtures.py
+"$QA_VENV/bin/python" scripts/compare-preview.py
+"$QA_VENV/bin/python" scripts/verify-phase2.py
+"$QA_VENV/bin/python" scripts/verify-phase2.py desktop-branches.pdf
+"$QA_VENV/bin/python" scripts/verify-bulk.py
+"$QA_VENV/bin/python" scripts/compare-print-ui.py
 ```
 
 原生PDF要等包含確切新檔名的成功狀態，避免舊通知假成功。逐頁核對MediaBox、Type0字型bytes、文字與邊界；海報接縫單獨處理。raster門檻均差<3/255且>30色差像素<3%。

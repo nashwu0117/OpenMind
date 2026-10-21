@@ -50,6 +50,17 @@ test('FreeMind subset round trips real hierarchy, CJK, styles, notes and links',
   await expect(page.getByText('已儲存於此裝置',{exact:true})).toBeVisible();const book=await page.evaluate(async()=>{const p='/src/core/library.ts',l=await import(p);return (await l.restoreLocal()).book;});const s=book.sheets[0],walk=(id:string):unknown=>({text:s.nodes[id].text,children:s.nodes[id].children.map(walk)});expect(walk(s.rootId)).toEqual(data.tree);expect(Object.values(s.nodes).some((n:any)=>n.notes==='繁體筆記\n第二行'&&n.link.startsWith('openmind:')&&n.style.color==='#11938a')).toBe(true);
   await page.getByRole('button',{name:'匯出',exact:true}).click();const [file]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:/^MM/}).click()]);await page.getByTestId('file-input').setInputFiles({name:'again.mm',mimeType:'application/xml',buffer:await readFile((await file.path())!)});await expect(page.getByTestId('canvas').locator('[data-node-id]')).toHaveCount(10);
 });
+test('FreeMind rejects oversized XML structure before rich-content conversion',async({page})=>{
+  await page.goto('/');
+  const error=await page.evaluate(async()=>{
+    const path='/src/io/freemind.ts';
+    const parser=await import(path);
+    const repeated='<span>x</span>'.repeat(50001);
+    try{parser.parseFreeMind(`<map><node ID="root" TEXT="中心"><richcontent TYPE="NOTE">${repeated}</richcontent></node></map>`);return '';}
+    catch(reason){return (reason as Error).message;}
+  });
+  expect(error).toContain('XML 結構超過安全上限');
+});
 test('expanded focused SVG and PNG export include visible descendants and embedded TC fonts',async({page})=>{
   await page.goto('/');const canvas=page.getByTestId('canvas');await canvas.locator('[data-node-id]').filter({hasText:'探索方向'}).click();await page.getByRole('button',{name:'收合分支',exact:true}).click();await page.getByRole('button',{name:'預覽選取分支',exact:true}).click();await page.getByRole('button',{name:'展開此分支',exact:true}).click();
   await page.getByRole('button',{name:'匯出',exact:true}).click();const [svg]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:/^SVG/}).click()]);const text=await readFile((await svg.path())!,'utf8');expect(text.match(/data-node-id=/g)).toHaveLength(4);expect(text).toContain('data:font/woff2;base64,');expect(text).not.toMatch(/url\((?:https?:|\.\/)/);expect(text).toContain('收集靈感與參考');

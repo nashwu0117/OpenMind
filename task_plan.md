@@ -62,3 +62,25 @@ Completion condition: audit real code and UI across all requested categories, re
 Baseline: 69 unit tests and strict build passed. Missing Chromium headless shell 1248 was repaired; unchanged 16 baseline E2E passed. This environment failure was not counted as a product regression.
 
 Final: schema v2 preserves v1 sources; 22 defect/reliability groups resolved. All scoped local capabilities wired and tested: nine structures, summaries, styles, attachments/stickers/vector equations, themes/templates, task/Gantt dependencies, presenter/PDF, FreeMind subset, embedded standalone graphics, view-only search, marquee and floating placement. Fresh 101 unit and 34 E2E pass; 36 layout cases, six rich/task/slide PDFs, 183-page print corpus and final packaged native 15/135-page checks pass. The five requested documents and 0.3.0 app are delivered. Matrix: 43 VERIFIED, 1 TESTED, 5 NOT STARTED, 1 BLOCKED. Full parity and public release remain unachieved for the explicit limitations in docs/RELEASE_READINESS.md; no publishing authorized or performed.
+
+## Phase 3 — Release candidate quality and production readiness (2026-10-20)
+Starting point: clean 60551fd01e9a43c6d8e06b32e65bbdb3326159d3; backup/openmind-0.3.0-before-rc-2026-10-20; release/openmind-rc-quality. Generated evidence stays in ignored artifacts/rc.
+
+Completion condition: re-run and extend meaningful unit, browser, packaged desktop, PDF/preview, import/export, storage-recovery, performance/soak, dependency/privacy and install checks; reproduce and fix any data-loss or core workflow defects; build a properly named/iconed macOS RC with an installable artifact; update test/release docs with exact status per claim and platform limitations. Do not publish, claim physical printer/other OS/signing validation, or expand feature scope. Stop after evidence supports an honest release decision.
+
+1. Preserve current source, run baseline suite/build and measure core behavior — complete
+2. Review security boundaries and real user workflows; add reproducible edge-case evidence — complete with partial repository-wide security coverage explicitly recorded
+3. Fix verified RC defects and measure justified performance changes — complete
+4. Verify packaged PDF/preview, macOS candidate app, privacy/dependencies and release docs — complete within available macOS arm64 environment; installer and other platforms remain blocked
+5. Run fresh acceptance gate and publish per-feature/platform status — complete; no public release performed
+
+Baseline: 101/101 unit, 34/34 E2E, and production build passed. Final RC: 101/101 unit, 37/37 E2E, production build, packaged macOS arm64 app launch/save/print/second-instance smoke, PDF text/font/page-boundary checks, and 183-page print fixture verification passed. Reproduced and fixed stale multi-tab overwrite and bounded FreeMind rich-content parser complexity. Final 1000-node layout median 5.1 ms / p95 16.9 ms; import + first render 111.5 ms; IndexedDB restore 12.8 ms; 100-page PDF 63.7 ms; renderer JS heap sample 86.4 MB. No performance improvement is claimed over the baseline; these are single-machine samples.
+
+Final security scan: Standard scan of immutable baseline `60551fd01e9a43c6d8e06b32e65bbdb3326159d3` completed with one low-severity CWE-400 FreeMind finding; the Phase 3 RC mitigation has a 50,001-element browser regression. Coverage remains partial (baseline auditor reviewed 40/92 inventoried files plus three focused surfaces). The generated report and limitations are recorded in the local Codex Security scan output and `docs/RELEASE_READINESS.md`.
+
+Overall release decision: NOT READY. macOS candidate is ad-hoc signed without Developer ID/notarization or installer; no private security-report channel or repository remote exists; physical printer, assistive-tech and non-macOS acceptance remain unverified. The clean checkpoint branch preserves the starting source. No commit, push or publication was performed.
+
+## macOS install and update delivery — 2026-10-20
+- Implemented: signed/notarized DMG + update ZIP build scripts, arm64/x64 tag workflow (draft-only), manual Electron autoUpdater IPC/UI, targeted unit/E2E/desktop checks, and release credential/setup documentation.
+- Verified locally: updater tests 4/4; overall unit tests 101/101; Chromium E2E 38/38; production build; npm audit 0 advisories; temporary macOS app launch/update-dialog/desktop smoke; temporary diskutil DMG mount and ZIP structure.
+- Remaining release gate: identify and configure the public GitHub repository, add Apple Developer ID and Notary API secrets, execute a tag build, manually inspect and publish the draft, then test Gatekeeper and a real prior-version-to-current-version update on a clean Mac. Overall remains NOT READY until those external/hardware checks pass.

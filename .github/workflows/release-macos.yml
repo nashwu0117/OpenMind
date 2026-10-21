@@ -1,0 +1,157 @@
+name: macOS signed release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macos-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build and notarize ${{ matrix.arch }}
+    environment: release
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-14
+            arch: arm64
+          - runner: macos-15-intel
+            arch: x64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Verify tag and install dependencies
+        run: |
+          test "${GITHUB_REF_NAME#v}" = "$(node -p "require('./package.json').version")"
+          npm ci
+          npm audit --audit-level=high
+          npm test
+          npm run test:updater
+          npm run build
+          npx playwright install chromium
+          npm run test:e2e
+      - name: Import Developer ID certificate
+        env:
+          APPLE_CERTIFICATE_P12_BASE64: ${{ secrets.APPLE_CERTIFICATE_P12_BASE64 }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+        run: |
+          set -euo pipefail
+          test -n "$APPLE_CERTIFICATE_P12_BASE64"
+          test -n "$APPLE_CERTIFICATE_PASSWORD"
+          KEYCHAIN_PATH="$RUNNER_TEMP/openmind-signing.keychain-db"
+          KEYCHAIN_PASSWORD="$(openssl rand -hex 32)"
+          CERT_PATH="$RUNNER_TEMP/openmind-developer-id.p12"
+          echo "::add-mask::$KEYCHAIN_PASSWORD"
+          printf '%s' "$APPLE_CERTIFICATE_P12_BASE64" | base64 -D > "$CERT_PATH"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security list-keychain -d user -s "$KEYCHAIN_PATH"
+          rm -f "$CERT_PATH"
+          echo "OPENMIND_KEYCHAIN_PATH=$KEYCHAIN_PATH" >> "$GITHUB_ENV"
+      - name: Package and sign app
+        env:
+          APPLE_SIGN_IDENTITY: ${{ secrets.APPLE_SIGN_IDENTITY }}
+          OPENMIND_UPDATE_REPOSITORY: ${{ github.repository }}
+          OPENMIND_DEFER_SIGN: '1'
+        run: |
+          set -euo pipefail
+          test -n "$APPLE_SIGN_IDENTITY"
+          npm run package
+          node scripts/sign-mac.mjs
+      - name: Notarize and staple app
+        env:
+          APPLE_API_KEY_P8_BASE64: ${{ secrets.APPLE_API_KEY_P8_BASE64 }}
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+        run: |
+          set -euo pipefail
+          test -n "$APPLE_API_KEY_P8_BASE64"
+          test -n "$APPLE_API_KEY_ID"
+          test -n "$APPLE_API_ISSUER"
+          API_KEY_PATH="$RUNNER_TEMP/AuthKey.p8"
+          printf '%s' "$APPLE_API_KEY_P8_BASE64" | base64 -D > "$API_KEY_PATH"
+          APP_PATH="release/$(node -p "require('./package.json').version")/darwin-${{ matrix.arch }}/OpenMind.app"
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" "$RUNNER_TEMP/OpenMind-notarization.zip"
+          xcrun notarytool submit "$RUNNER_TEMP/OpenMind-notarization.zip" --key "$API_KEY_PATH" --key-id "$APPLE_API_KEY_ID" --issuer "$APPLE_API_ISSUER" --wait
+          xcrun stapler staple "$APP_PATH"
+          xcrun stapler validate "$APP_PATH"
+          rm -f "$API_KEY_PATH" "$RUNNER_TEMP/OpenMind-notarization.zip"
+      - name: Create and notarize drag-to-install DMG
+        env:
+          APPLE_API_KEY_P8_BASE64: ${{ secrets.APPLE_API_KEY_P8_BASE64 }}
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+        run: |
+          set -euo pipefail
+          node scripts/make-dmg.mjs
+          API_KEY_PATH="$RUNNER_TEMP/AuthKey.p8"
+          printf '%s' "$APPLE_API_KEY_P8_BASE64" | base64 -D > "$API_KEY_PATH"
+          VERSION="$(node -p "require('./package.json').version")"
+          DMG_PATH="release/$VERSION/darwin-${{ matrix.arch }}/OpenMind-darwin-${{ matrix.arch }}-$VERSION.dmg"
+          xcrun notarytool submit "$DMG_PATH" --key "$API_KEY_PATH" --key-id "$APPLE_API_KEY_ID" --issuer "$APPLE_API_ISSUER" --wait
+          xcrun stapler staple "$DMG_PATH"
+          xcrun stapler validate "$DMG_PATH"
+          spctl --assess --type execute --verbose "$PWD/release/$VERSION/darwin-${{ matrix.arch }}/OpenMind.app"
+          rm -f "$API_KEY_PATH"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: release-${{ matrix.arch }}
+          path: |
+            release/*/darwin-${{ matrix.arch }}/OpenMind-darwin-${{ matrix.arch }}-*.dmg
+            release/*/darwin-${{ matrix.arch }}/OpenMind-darwin-${{ matrix.arch }}-*.zip
+          if-no-files-found: error
+          retention-days: 14
+      - if: always()
+        name: Remove temporary signing keychain
+        run: |
+          if [ -n "${OPENMIND_KEYCHAIN_PATH:-}" ]; then security delete-keychain "$OPENMIND_KEYCHAIN_PATH" || true; fi
+
+  draft-release:
+    name: Attach verified builds to a draft GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: release-*
+          path: release-assets
+          merge-multiple: true
+      - name: Verify assets and create or refresh draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          VERSION="${TAG#v}"
+          test "$(find release-assets -maxdepth 1 -name '*.dmg' | wc -l | tr -d ' ')" = 2
+          test "$(find release-assets -maxdepth 1 -name '*.zip' | wc -l | tr -d ' ')" = 2
+          test "$(gh api "repos/${GITHUB_REPOSITORY}" --jq '.visibility')" = public
+          shasum -a 256 release-assets/* > release-assets/SHA256SUMS.txt
+          EXISTING_DRAFT="$(gh release view "$TAG" --json isDraft --jq '.isDraft' 2>/dev/null || true)"
+          if [ "$EXISTING_DRAFT" = true ]; then
+            gh release upload "$TAG" release-assets/* --clobber
+            gh release edit "$TAG" --draft --title "OpenMind $TAG" --notes "OpenMind $VERSION for Apple Silicon (arm64) and Intel (x64). Open the matching DMG and drag OpenMind into Applications. Signed app ZIP files enable in-app updates."
+          elif [ -n "$EXISTING_DRAFT" ]; then
+            echo "A published release already exists for $TAG; refusing to replace its assets." >&2
+            exit 1
+          else
+            gh release create "$TAG" --draft --title "OpenMind $TAG" --notes "OpenMind $VERSION for Apple Silicon (arm64) and Intel (x64). Open the matching DMG and drag OpenMind into Applications. Signed app ZIP files enable in-app updates." release-assets/*
+          fi
