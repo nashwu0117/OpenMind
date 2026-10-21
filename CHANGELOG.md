@@ -5,6 +5,8 @@
 ## 0.3.2 Preview — 2026-10-20
 
 - Redesign the OpenMind app icon around a focused idea hub and readable topic cards; regenerate the 1024px PNG and macOS ICNS.
+- Publish an Apple Silicon macOS preview with drag-to-Applications DMG, app ZIP, SHA-256 checksums, and bilingual installation notes on 2026-10-21. The preview uses an ad-hoc signature and is not notarized by Apple.
+- Render the macOS icon into an explicit 1024-pixel bitmap so Retina display scaling cannot break packaging; show renderer diagnostics on failure.
 
 ## 0.3.1 RC — 2026-10-20
 

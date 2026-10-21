@@ -8,8 +8,29 @@ const custom=process.env.OPENMIND_EXECUTABLE;
 const application=await electron.launch({executablePath:custom,args:[...(custom?[]:[root]),`--user-data-dir=${userData}`],timeout:30000});
 try{
  const page=await application.firstWindow();await page.waitForSelector('[data-node-id]');
- const updateStatus=await page.evaluate(()=>window.openmind?.getUpdateState());expect(['unavailable','unsupported']).toContain(updateStatus?.phase);await page.getByRole('button',{name:'檢查更新',exact:true}).click();await expect(page.getByRole('dialog',{name:'軟體更新'})).toContainText(updateStatus?.phase==='unsupported'?'自動更新僅適用':'尚未設定有效的 GitHub 更新來源');await page.keyboard.press('Escape');
- const appMenu=await application.evaluate(({Menu})=>Menu.getApplicationMenu()?.items[0]?.submenu?.items.map(item=>item.label||item.role));expect(appMenu).toContain('檢查更新…'); await page.locator('.language-control select').selectOption('en'); await expect(page.getByRole('button',{name:'Print & PDF',exact:true})).toBeVisible(); await expect(page.locator('html')).toHaveAttribute('lang','en'); await page.getByRole('button',{name:'Check for Updates',exact:true}).click(); await expect(page.getByRole('dialog',{name:'Software Update'})).toContainText('Automatic updates are only available'); await page.keyboard.press('Escape'); await expect.poll(()=>application.evaluate(({Menu})=>Menu.getApplicationMenu()?.items[0]?.submenu?.items.map(item=>item.label||item.role))).toContain('Check for Updates…'); await page.locator('.language-control select').selectOption('zh-TW'); await expect(page.getByRole('button',{name:'列印與 PDF',exact:true})).toBeVisible();
+ const updateStatus=await page.evaluate(()=>window.openmind?.getUpdateState());
+ expect(['idle','unavailable','unsupported']).toContain(updateStatus?.phase);
+ const configuredUpdates=updateStatus?.phase==='idle';
+ if(configuredUpdates){
+  const pkg=JSON.parse(await readFile(path.join(root,'package.json'),'utf8'));
+  expect(updateStatus.currentVersion).toBe(pkg.version);
+  expect(await application.evaluate(({autoUpdater})=>autoUpdater.getFeedURL())).toBe(`https://update.electronjs.org/nashwu0117/OpenMind/darwin-${process.arch}/${pkg.version}`);
+  // Validate the configured native IPC/UI without depending on a live update server.
+  await application.evaluate(({autoUpdater})=>{globalThis.__updateChecks=0;autoUpdater.checkForUpdates=()=>{globalThis.__updateChecks++;autoUpdater.emit('update-not-available');};});
+ }
+ await page.getByRole('button',{name:'檢查更新',exact:true}).click();
+ await expect(page.getByRole('dialog',{name:'軟體更新'})).toContainText(configuredUpdates?`目前已是最新版本（${updateStatus.currentVersion}）`:updateStatus?.phase==='unsupported'?'自動更新僅適用':'尚未設定有效的 GitHub 更新來源');
+ await page.keyboard.press('Escape');
+ const appMenu=await application.evaluate(({Menu})=>Menu.getApplicationMenu()?.items[0]?.submenu?.items.map(item=>item.label||item.role));expect(appMenu).toContain('檢查更新…');
+ await page.locator('.language-control select').selectOption('en');
+ await expect(page.getByRole('button',{name:'Print & PDF',exact:true})).toBeVisible();
+ await expect(page.locator('html')).toHaveAttribute('lang','en');
+ await page.getByRole('button',{name:'Check for Updates',exact:true}).click();
+ await expect(page.getByRole('dialog',{name:'Software Update'})).toContainText(configuredUpdates?`Already up to date: ${updateStatus.currentVersion}`:updateStatus?.phase==='unsupported'?'Automatic updates are only available':'No valid GitHub update source');
+ if(configuredUpdates)expect(await application.evaluate(()=>globalThis.__updateChecks)).toBe(2);
+ await page.keyboard.press('Escape');
+ await expect.poll(()=>application.evaluate(({Menu})=>Menu.getApplicationMenu()?.items[0]?.submenu?.items.map(item=>item.label||item.role))).toContain('Check for Updates…');
+ await page.locator('.language-control select').selectOption('zh-TW');await expect(page.getByRole('button',{name:'列印與 PDF',exact:true})).toBeVisible();
  const electronRuntime=process.platform==='darwin'?path.join(root,'node_modules/electron/dist/Electron.app/Contents/MacOS/Electron'):path.join(root,'node_modules/electron/dist',process.platform==='win32'?'electron.exe':'electron');
  const executable=custom??electronRuntime;
  const secondInstance=spawn(executable,[...(custom?[]:[root]),`--user-data-dir=${userData}`],{stdio:'ignore'});

@@ -2,7 +2,11 @@
 
 驗收日期：2026-10-20。目標是 macOS arm64 本機候選包及公開原始碼快照。公開 repository 已建立；本機 Git 歷史、工作分支與生成檔案不屬於公開快照。
 
-## 發布判定：NOT READY
+## 0.3.2 預覽版 — 2026-10-21
+
+[Apple Silicon 預覽版下載](https://github.com/nashwu0117/OpenMind/releases/tag/preview-0.3.2)提供 DMG、ZIP 與 SHA-256 清單。這是 macOS arm64 的 ad-hoc 簽署預覽版，沒有 Developer ID 或 Apple 公證；首次開啟可能需要個別允許 OpenMind。Intel、乾淨 Mac 安裝及真實自動更新仍未驗收，預覽版請手動下載更新。下方保留 0.3.1 RC 的既有驗收紀錄與正式版待辦。
+
+## 正式版發布判定：NOT READY
 
 目前核心編輯、離線資料、匯入匯出和列印驗收通過。安全來源檢視涵蓋文件驗證／儲存、匯入匯出、Electron IPC、列印、更新與發行自動化，但不是完整的全程式碼安全稽核。`v*` tag 建立 ruleset 已啟用，Actions 預設權限為唯讀，簽章 job 的 `release` Environment 禁止自我審核；目前只有一位審核人，因此要新增另一位可信任維護者後才能放行。Apple 憑證未設定，簽章／公證的 macOS 發行 runner、已公證下載安裝器與真實更新往返尚未驗收。實體印表機、Windows、Linux 與非 arm64/x64 平台也未驗收。
 
@@ -59,9 +63,9 @@ PDF、對照圖、效能 JSON 與測試追蹤是本機生成產物，已排除�
 
 ## 安裝候選包
 
-本機 RC app 使用 ad-hoc 簽章，並非已公證的網路下載安裝器；GitHub Releases 尚無一般使用者安裝包。首次升級前請另存 `.openmind` 備份；舊 0.2 無法讀取 v2，回退時使用舊版原檔。
+0.3.2 Apple Silicon 預覽版已提供 DMG 和 ZIP；它使用 ad-hoc 簽章，尚未經 Apple 公證。安裝與首次開啟方式見[版本說明](https://github.com/nashwu0117/OpenMind/releases/tag/preview-0.3.2)。首次升級前請另存 `.openmind` 備份；舊 0.2 無法讀取 v2，回退時使用舊版原檔。
 
-## 公開發布前必須完成
+## 正式版公開發布前必須完成
 
 1. 增加第二位可信任維護者為 `release` Environment 審核人；簽章與公證憑證只存放在該 Environment，並保留限制 `v*` tag 建立權的 ruleset。
 2. 設定 Developer ID／Notary secrets，推送版本 tag，檢查 arm64 與 x64 的 GitHub 草稿產物；乾淨 Mac 測試 Gatekeeper、下載、安裝、真實版本更新、移除和復原，再手動發布 Release。

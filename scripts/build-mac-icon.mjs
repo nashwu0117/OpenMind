@@ -13,9 +13,15 @@ import Foundation
 let input = URL(fileURLWithPath: CommandLine.arguments[1])
 let output = URL(fileURLWithPath: CommandLine.arguments[2])
 guard let image = NSImage(contentsOf: input) else { fatalError("Cannot open OpenMind SVG icon") }
-var rect = CGRect(origin: .zero, size: NSSize(width: 1024, height: 1024))
-guard let cg = image.cgImage(forProposedRect: &rect, context: nil, hints: nil), cg.width == 1024, cg.height == 1024 else { fatalError("OpenMind SVG must rasterize to 1024 × 1024") }
-let bitmap = NSBitmapImageRep(cgImage: cg)
+guard let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: 1024, pixelsHigh: 1024, bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0),
+      let context = NSGraphicsContext(bitmapImageRep: bitmap) else { fatalError("Cannot create OpenMind icon bitmap") }
+// An explicit pixel buffer keeps Retina backing scale from changing the output size.
+bitmap.size = NSSize(width: 1024, height: 1024)
+NSGraphicsContext.saveGraphicsState()
+NSGraphicsContext.current = context
+context.imageInterpolation = .high
+image.draw(in: NSRect(x: 0, y: 0, width: 1024, height: 1024), from: .zero, operation: .copy, fraction: 1)
+NSGraphicsContext.restoreGraphicsState()
 guard let png = bitmap.representation(using: .png, properties: [:]) else { fatalError("Cannot encode OpenMind PNG icon") }
 try png.write(to: output, options: .atomic)
 `;
@@ -25,7 +31,7 @@ try{
   const source=path.join(assets,'openmind-icon.svg');
   const pngPath=path.join(temp,'openmind-icon-1024.png');
   await writeFile(rasterizer,swiftSource);
-  execFileSync('/usr/bin/swift',['-module-cache-path',path.join(temp,'swift-modules'),rasterizer,source,pngPath],{stdio:'ignore'});
+  execFileSync('/usr/bin/swift',['-module-cache-path',path.join(temp,'swift-modules'),rasterizer,source,pngPath],{stdio:'inherit'});
   const pngSource=await readFile(pngPath);
   await writeFile(path.join(assets,'openmind-icon-1024.png'),pngSource);
 

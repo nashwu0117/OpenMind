@@ -2,7 +2,11 @@
 
 Acceptance date: 2026-10-20. Target: local macOS arm64 candidate and public source snapshot. Local Git history, work branches, and generated artifacts are excluded from the public source snapshot.
 
-## Release decision: NOT READY
+## 0.3.2 preview — 2026-10-21
+
+The [Apple Silicon preview](https://github.com/nashwu0117/OpenMind/releases/tag/preview-0.3.2) provides a DMG, ZIP, and SHA-256 manifest. It is an ad-hoc-signed macOS arm64 preview without Developer ID signing or Apple notarization; first launch may require allowing OpenMind individually. Intel, clean-Mac installation, and real automatic updates remain unverified. Download preview updates manually. The remaining sections retain the earlier 0.3.1 RC evidence and stable-release work.
+
+## Stable-release decision: NOT READY
 
 Core editing, offline storage, import/export, and print acceptance passed in the recorded RC checks. The security source review covered document validation/storage, import/export, Electron IPC, printing, updater, and release automation; it was not a full repository security audit. A `v*` tag ruleset is enabled and Actions defaults to read-only permissions. The signing job's `release` Environment prevents self-review, but currently has only one reviewer; a second trusted maintainer is needed. Apple credentials are absent, and the signed/notarized macOS release runner, notarized download, and real update round trip have not been verified. Physical printers, Windows, Linux, and architectures other than arm64/x64 have not been tested.
 
@@ -52,7 +56,7 @@ PDFs, comparison images, performance JSON, and test traces are local generated a
 
 ## Candidate and required release work
 
-The local app uses an ad-hoc signature, not a notarized public installer. GitHub Releases has no generally downloadable installer yet. Before release:
+The 0.3.2 Apple Silicon preview provides a DMG and ZIP with an ad-hoc signature, without Apple notarization. See the [release notes](https://github.com/nashwu0117/OpenMind/releases/tag/preview-0.3.2) for installation and first-launch instructions. Back up `.openmind` documents before upgrading. Before a stable release:
 
 1. Add a second trusted maintainer to the `release` Environment. Keep signing/notary credentials in that Environment and preserve the `v*` tag ruleset.
 2. Configure Developer ID and Notary secrets, push a version tag, inspect both arm64 and x64 draft artifacts, and test Gatekeeper, download, install, real update, uninstall, and recovery on a clean Mac before manually publishing.

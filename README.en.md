@@ -22,7 +22,7 @@ OpenMind is a desktop mind-mapping app built around clarity and print quality. S
 
 ## Download and install
 
-[Visit GitHub Releases for available downloads](https://github.com/nashwu0117/OpenMind/releases). Check each release for its supported processor architecture and signing status. To install a DMG, open the disk image and drag OpenMind to your Applications folder.
+[Download the 0.3.2 DMG for Apple Silicon Macs](https://github.com/nashwu0117/OpenMind/releases/download/preview-0.3.2/OpenMind-darwin-arm64-0.3.2.dmg) · [ZIP and release notes](https://github.com/nashwu0117/OpenMind/releases/tag/preview-0.3.2). This preview is `arm64` only and does not run on Intel Macs. Open the DMG, drag OpenMind to Applications, and launch it from Applications.
 
 The current macOS preview uses an ad-hoc signature and is not notarized by Apple; no Apple Developer ID certificate is needed. macOS may block it on first launch. After confirming that the download came from this project's GitHub Release, allow OpenMind in **System Settings → Privacy & Security → Open Anyway**. You do not need to disable Gatekeeper globally.
 
@@ -36,7 +36,7 @@ The current macOS preview uses an ad-hoc signature and is not notarized by Apple
 
 ## Updates
 
-The desktop app includes a manual update check. Its public update source is configured, but the full download, signature verification, installation, and restart flow still needs end-to-end validation on a signed public release. See the [release notes](https://github.com/nashwu0117/OpenMind/releases) for the status of each build.
+Download updates to this preview manually from [GitHub Releases](https://github.com/nashwu0117/OpenMind/releases), and save a separate `.openmind` backup before upgrading. The desktop app includes a manual update check, but the update service ignores prereleases. The full download, signature verification, installation, and restart flow still needs end-to-end validation on a Developer ID-signed public release.
 
 ## Run from source
 

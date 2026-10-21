@@ -5,6 +5,8 @@
 ## 0.3.2 Preview — 2026-10-20
 
 - 重新設計 OpenMind app 圖示，以聚焦的想法核心連結清楚易讀的主題卡片，並重新產生 1024px PNG 與 macOS ICNS。
+- 2026-10-21 發布 Apple Silicon macOS 預覽版，提供拖移安裝 DMG、app ZIP、SHA-256 清單與雙語安裝說明。預覽版使用 ad-hoc 簽章，尚未經 Apple 公證。
+- macOS 圖示改用固定 1024 像素的點陣緩衝區，避免 Retina 螢幕倍率造成打包失敗，並保留圖示產生錯誤的診斷輸出。
 
 ## 0.3.1 RC — 2026-10-20
 

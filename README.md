@@ -22,7 +22,7 @@ OpenMind 是專注於內容清晰度與列印品質的桌面心智圖工具。�
 
 ## 下載與安裝
 
-[前往 GitHub Releases 查看可下載版本](https://github.com/nashwu0117/OpenMind/releases)。請先查看各版本說明列出的處理器架構與簽署狀態。安裝 DMG 時，打開磁碟映像並將 OpenMind 拖到「Applications／應用程式」資料夾。
+[下載 0.3.2 DMG（Apple Silicon／M 系列 Mac）](https://github.com/nashwu0117/OpenMind/releases/download/preview-0.3.2/OpenMind-darwin-arm64-0.3.2.dmg) · [ZIP 與版本說明](https://github.com/nashwu0117/OpenMind/releases/tag/preview-0.3.2)。本次預覽版僅提供 `arm64`，不適用於 Intel Mac。打開 DMG，將 OpenMind 拖到「Applications／應用程式」資料夾，再從應用程式資料夾開啟。
 
 目前的 macOS 預覽版使用 ad-hoc 簽章，尚未經 Apple 公證；不需要 Apple Developer ID 憑證。首次開啟時系統可能會阻擋。確認下載來源是本專案的 GitHub Release 後，可在「系統設定 → 隱私權與安全性 → 仍要打開」為 OpenMind 個別允許；不需要整體停用 Gatekeeper。
 
@@ -36,7 +36,7 @@ OpenMind 是專注於內容清晰度與列印品質的桌面心智圖工具。�
 
 ## 更新
 
-桌面版提供手動檢查更新的入口。公開更新來源已設定；下載、簽署驗證、安裝與重新啟動的完整流程，仍須在正式簽署的公開版本完成端對端驗收。各版本的實際狀態會列在 [Release 說明](https://github.com/nashwu0117/OpenMind/releases)。
+本次預覽版請從 [GitHub Releases](https://github.com/nashwu0117/OpenMind/releases) 手動下載更新；升級前先另存 `.openmind` 備份。桌面版雖提供手動檢查更新的入口，但更新服務會忽略預覽版。下載、簽署驗證、安裝與重新啟動的完整流程，仍須在 Developer ID 簽署的公開版本完成端對端驗收。
 
 ## 從原始碼執行
 

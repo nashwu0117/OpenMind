@@ -2,7 +2,15 @@
 
 [繁體中文](RELEASING.md) · [English](RELEASING.en.md)
 
-The direct-download target is Apple Silicon (`arm64`) and Intel (`x64`) Macs. Each architecture should receive a notarized DMG for drag-to-Applications installation and a signed app ZIP for Electron updates. A local `npm run package` build is only for development validation. Do not distribute an ad-hoc build or ask users to disable Gatekeeper.
+The [0.3.2 Apple Silicon preview](https://github.com/nashwu0117/OpenMind/releases/tag/preview-0.3.2) provides a drag-to-Applications DMG, app ZIP, and `SHA256SUMS.txt`. It is an ad-hoc-signed build tested locally, without Apple notarization. First launch may require allowing OpenMind under System Settings → Privacy & Security → Open Anyway. Do not disable Gatekeeper globally.
+
+## Manual preview releases
+
+Preview releases use a `preview-<version>` tag and are marked as GitHub prereleases. They do not trigger the Developer ID `v*` workflow below, and the in-app update service ignores them. Version 0.3.2 is tested on macOS arm64 only; there is no Intel or universal build.
+
+On macOS arm64, run `OPENMIND_UPDATE_REPOSITORY=nashwu0117/OpenMind npm run package`, then `node scripts/make-dmg.mjs`. The scripts refuse to overwrite existing outputs. Before publishing, run desktop smoke tests against the packaged app, verify nested signatures, mount the DMG, and test an installed copy. Generate SHA-256 checksums for the DMG and ZIP and attach those exact files to the preview Release. An intact ad-hoc signature does not establish an Apple-verified developer identity or notarization.
+
+The remaining setup is for future stable releases, targeting Apple Silicon (`arm64`) and Intel (`x64`) Macs with Developer ID-signed, notarized DMGs and update ZIPs.
 
 ## One-time GitHub and Apple setup
 
@@ -30,4 +38,4 @@ The workflow never publishes a version without human review. Missing secrets, a 
 
 The app contacts Electron's public update service only after the user requests a check; that service then queries GitHub Releases. The request contains the current version and architecture and exposes ordinary network connection information. It does not include map data, attachments, or local paths. Editing and printing work offline; checking or downloading updates does not.
 
-The source repository is public and private vulnerability reporting is enabled. Apple signing/notarization credentials and clean-user test environments are not configured. The release workflow has not produced verified GitHub artifacts, and there is no notarized installer or real update round trip yet. Source code is available, but a public installer is not. See the [release-readiness report](RELEASE_READINESS.en.md).
+The source repository and Apple Silicon preview downloads are public, and private vulnerability reporting is enabled. Apple signing/notarization credentials and clean-Mac test environments are not configured. The signed/notarized release workflow, a notarized installer, and a real update round trip remain unverified. Local installation testing does not establish Gatekeeper behavior on a clean Mac. See the [release-readiness report](RELEASE_READINESS.en.md).
