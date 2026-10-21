@@ -2,13 +2,13 @@
 
 [繁體中文](RELEASING.md) · [English](RELEASING.en.md)
 
-The [0.3.2 Apple Silicon preview](https://github.com/nashwu0117/OpenMind/releases/tag/preview-0.3.2) provides a drag-to-Applications DMG, app ZIP, and `SHA256SUMS.txt`. It is an ad-hoc-signed build tested locally, without Apple notarization. First launch may require allowing OpenMind under System Settings → Privacy & Security → Open Anyway. Do not disable Gatekeeper globally.
+The [0.3.3 Apple Silicon preview](https://github.com/nashwu0117/OpenMind/releases/tag/preview-0.3.3) provides a drag-to-Applications DMG, app ZIP, and `SHA256SUMS.txt`. It is an ad-hoc-signed build tested locally, without Apple notarization. First launch may require allowing OpenMind under System Settings → Privacy & Security → Open Anyway. Do not disable Gatekeeper globally.
 
 ## Manual preview releases
 
-Preview releases use a `preview-<version>` tag and are marked as GitHub prereleases. They do not trigger the Developer ID `v*` workflow below, and the in-app update service ignores them. Version 0.3.2 is tested on macOS arm64 only; there is no Intel or universal build.
+Preview releases use a `preview-<version>` tag and are marked as GitHub prereleases. They do not trigger the Developer ID `v*` workflow below or install automatically. Version 0.3.3 offers a manual download link in its update dialog without calling the native update service. This preview is tested on macOS arm64 only; there is no Intel or universal build.
 
-On macOS arm64, run `OPENMIND_UPDATE_REPOSITORY=nashwu0117/OpenMind npm run package`, then `node scripts/make-dmg.mjs`. The scripts refuse to overwrite existing outputs. Before publishing, run desktop smoke tests against the packaged app, verify nested signatures, mount the DMG, and test an installed copy. Generate SHA-256 checksums for the DMG and ZIP and attach those exact files to the preview Release. An intact ad-hoc signature does not establish an Apple-verified developer identity or notarization.
+On macOS arm64, run `OPENMIND_UPDATE_REPOSITORY=nashwu0117/OpenMind OPENMIND_UPDATE_CHANNEL=preview npm run package`, then `node scripts/make-dmg.mjs`. Local packages default to preview; the signed release workflow must explicitly set `OPENMIND_UPDATE_CHANNEL=stable`. The scripts refuse to overwrite existing outputs. Before publishing, run desktop smoke tests against the packaged app, verify nested signatures, mount the DMG, and test an installed copy. Generate SHA-256 checksums for the DMG and ZIP and attach those exact files to the preview Release. An intact ad-hoc signature does not establish an Apple-verified developer identity or notarization.
 
 The remaining setup is for future stable releases, targeting Apple Silicon (`arm64`) and Intel (`x64`) Macs with Developer ID-signed, notarized DMGs and update ZIPs.
 
@@ -36,6 +36,6 @@ The workflow never publishes a version without human review. Missing secrets, a 
 
 ## Privacy and current limitations
 
-The app contacts Electron's public update service only after the user requests a check; that service then queries GitHub Releases. The request contains the current version and architecture and exposes ordinary network connection information. It does not include map data, attachments, or local paths. Editing and printing work offline; checking or downloading updates does not.
+Preview builds do not call the native update service; they open GitHub Releases only after the user selects the download button. Stable builds contact Electron's public update service only after the user requests a check; that service then queries GitHub Releases. Stable requests contain the current version and architecture and expose ordinary network connection information. They do not include map data, attachments, or local paths. Editing and printing work offline; downloading updates does not.
 
 The source repository and Apple Silicon preview downloads are public, and private vulnerability reporting is enabled. Apple signing/notarization credentials and clean-Mac test environments are not configured. The signed/notarized release workflow, a notarized installer, and a real update round trip remain unverified. Local installation testing does not establish Gatekeeper behavior on a clean Mac. See the [release-readiness report](RELEASE_READINESS.en.md).

@@ -68,6 +68,7 @@ jobs:
         env:
           APPLE_SIGN_IDENTITY: ${{ secrets.APPLE_SIGN_IDENTITY }}
           OPENMIND_UPDATE_REPOSITORY: ${{ github.repository }}
+          OPENMIND_UPDATE_CHANNEL: stable
           OPENMIND_DEFER_SIGN: '1'
         run: |
           set -euo pipefail

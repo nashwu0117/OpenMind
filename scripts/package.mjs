@@ -2,7 +2,12 @@
 import {cp,readFile,writeFile,mkdir,rename,access} from 'node:fs/promises';
 import path from 'node:path';
 import {execFileSync} from 'node:child_process';
+import updateConfig from '../electron/updater.cjs';
 const root=process.cwd(),platform=process.platform,arch=process.arch;
+const updateRepository=process.env.OPENMIND_UPDATE_REPOSITORY||'';
+const updateChannel=process.env.OPENMIND_UPDATE_CHANNEL??'preview';
+if(updateRepository&&!updateConfig.isValidRepository(updateRepository))throw new Error('OPENMIND_UPDATE_REPOSITORY 必須為有效的 owner/repository。');
+if(!updateConfig.isValidUpdateChannel(updateChannel))throw new Error('OPENMIND_UPDATE_CHANNEL 必須為 preview 或 stable。');
 const pkg=JSON.parse(await readFile(path.join(root,'package.json'),'utf8'));
 const base=process.env.OPENMIND_PACKAGE_DIR?path.resolve(process.env.OPENMIND_PACKAGE_DIR):path.join(root,'release',pkg.version,`${platform}-${arch}`);
 const target=path.join(base,platform==='darwin'?'OpenMind.app':'OpenMind');
@@ -15,9 +20,7 @@ const resources=path.join(target,platform==='darwin'?'Contents/Resources':'resou
 const appPath=path.join(resources,'app');await mkdir(appPath,{recursive:true});
 for(const name of ['dist','electron','LICENSE','THIRD_PARTY_NOTICES.md'])await cp(path.join(root,name),path.join(appPath,name),{recursive:true});
 if(platform==='darwin')await cp(path.join(root,'assets/OpenMind.icns'),path.join(target,'Contents/Resources/OpenMind.icns'));
-const updateRepository=process.env.OPENMIND_UPDATE_REPOSITORY||'';
-if(updateRepository&&!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(updateRepository))throw new Error('OPENMIND_UPDATE_REPOSITORY 必須為 owner/repository。');
-if(platform==='darwin')await writeFile(path.join(resources,'openmind-update.json'),JSON.stringify({repository:updateRepository}));
+if(platform==='darwin')await writeFile(path.join(resources,'openmind-update.json'),JSON.stringify({repository:updateRepository,channel:updateChannel}));
 await writeFile(path.join(appPath,'package.json'),JSON.stringify({name:pkg.name,version:pkg.version,description:pkg.description,license:pkg.license,main:pkg.main}));
 if(platform==='darwin'){
  const plistPath=path.join(target,'Contents/Info.plist');let plist=await readFile(plistPath,'utf8');

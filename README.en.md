@@ -22,13 +22,14 @@ OpenMind is a desktop mind-mapping app built around clarity and print quality. S
 
 ## Download and install
 
-[Download the 0.3.2 DMG for Apple Silicon Macs](https://github.com/nashwu0117/OpenMind/releases/download/preview-0.3.2/OpenMind-darwin-arm64-0.3.2.dmg) · [ZIP and release notes](https://github.com/nashwu0117/OpenMind/releases/tag/preview-0.3.2). This preview is `arm64` only and does not run on Intel Macs. Open the DMG, drag OpenMind to Applications, and launch it from Applications.
+[Download the 0.3.3 DMG for Apple Silicon Macs](https://github.com/nashwu0117/OpenMind/releases/download/preview-0.3.3/OpenMind-darwin-arm64-0.3.3.dmg) · [ZIP and release notes](https://github.com/nashwu0117/OpenMind/releases/tag/preview-0.3.3). This preview is `arm64` only and does not run on Intel Macs. Open the DMG, drag OpenMind to Applications, and launch it from Applications.
 
 The current macOS preview uses an ad-hoc signature and is not notarized by Apple; no Apple Developer ID certificate is needed. macOS may block it on first launch. After confirming that the download came from this project's GitHub Release, allow OpenMind in **System Settings → Privacy & Security → Open Anyway**. You do not need to disable Gatekeeper globally.
 
 ## Why OpenMind
 
 - **Focused thinking:** Nine map structures, freeform topics, deep branches, a synchronized outline, search, task timelines, and presentation mode.
+- **Folder organization:** Manage maps from the library; right-click or use a card's ⋯ menu to rename, duplicate or move it. Each map opens on a dedicated editing page.
 - **Readable print:** Six pagination strategies, embedded Traditional Chinese fonts in PDF, cross-page relationship hints, and print preview.
 - **Local by default:** No account is required. Documents stay in local files or browser storage. The app has no ads or telemetry.
 - **Portable output:** Native `.openmind` files, Markdown, OPML, a documented FreeMind subset, and SVG/PNG image export.
@@ -36,7 +37,7 @@ The current macOS preview uses an ad-hoc signature and is not notarized by Apple
 
 ## Updates
 
-Download updates to this preview manually from [GitHub Releases](https://github.com/nashwu0117/OpenMind/releases), and save a separate `.openmind` backup before upgrading. The desktop app includes a manual update check, but the update service ignores prereleases. The full download, signature verification, installation, and restart flow still needs end-to-end validation on a Developer ID-signed public release.
+Download updates to this preview manually from [GitHub Releases](https://github.com/nashwu0117/OpenMind/releases), and save a separate `.openmind` backup before upgrading. The 0.3.3 update dialog explains manual updates and offers a button to open the download page. Version 0.3.2 may still show a misleading network error; use the download link above instead. Automatic download, signature verification, installation, and restart still need end-to-end validation on a Developer ID-signed public release.
 
 ## Run from source
 

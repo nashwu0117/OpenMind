@@ -37,10 +37,11 @@ function initialWorkbook(initial: LocalRestore): Workbook {
 function updateMessage(status: UpdateStatus): string {
     switch (status.phase) {
         case 'idle': return tTemplate('目前版本 {0}。', [status.currentVersion]);
+        case 'manual': return t('預覽版採用手動更新，請開啟下載頁面取得新版，再拖曳至「應用程式」取代舊版。');
         case 'checking': return t('正在檢查更新…');
         case 'downloading': return status.availableVersion ? tTemplate('正在下載 {0}…', [status.availableVersion]) : t('正在下載更新…');
         case 'current': return tTemplate('目前已是最新版本（{0}）。', [status.currentVersion]);
-        case 'downloaded': return tTemplate('OpenMind {0} 已下載完成。', [status.availableVersion ?? '']);
+        case 'downloaded': return status.availableVersion ? tTemplate('OpenMind {0} 已下載完成。', [status.availableVersion]) : t('更新已下載完成，可重新啟動並安裝。');
         case 'installing': return t('正在重新啟動並安裝更新…');
         default: return t(status.message);
     }
@@ -132,7 +133,8 @@ function Editor({initial,writer}:{initial:LocalRestore;writer:'active'|'waiting'
     const [help, setHelp] = useState(false);
     const [updateDialog,setUpdateDialog]=useState(false);
     const [updateStatus,setUpdateStatus]=useState<UpdateStatus>({phase:'idle',currentVersion:appVersion,message:tTemplate("目前版本 {0}。",[appVersion])});
-    async function openUpdateDialog(){const api=window.openmind;if(!api)return;setUpdateDialog(true);try{setUpdateStatus(await api.checkForUpdates());}catch{setUpdateStatus({phase:'error',currentVersion:appVersion,message:t('無法連線至更新服務，請稍後再試。')});}}
+    async function openUpdateDialog(){const api=window.openmind;if(!api)return;setUpdateDialog(true);try{setUpdateStatus(await api.checkForUpdates());}catch{setUpdateStatus({phase:'error',currentVersion:appVersion,message:t('更新失敗，請稍後再試。')});}}
+    async function openUpdateDownload(){if(updateStatus.phase!=='manual'||!updateStatus.releasesUrl)return;try{await window.openmind?.openLink(updateStatus.releasesUrl);}catch{notify(t('無法開啟下載頁面，請稍後再試。'));}}
     useEffect(()=>{const api=window.openmind;if(!api)return;let active=true;const offState=api.onUpdateState(state=>{if(active)setUpdateStatus(state);});const offOpen=api.onOpenUpdates(()=>{if(active)void openUpdateDialog();});void api.getUpdateState().then(state=>{if(active)setUpdateStatus(state);}).catch(()=>{});return()=>{active=false;offState();offOpen();};},[]);
     useModalFocus(presentation?t('簡報模式'):print?t('列印工作室'):updateDialog?t('軟體更新'):help?t('操作指南'):newDialog?t('建立心智圖'):editing?t('編輯主題'):null);
     useEffect(()=>{if(!editing&&!newDialog&&!help&&!updateDialog)return;const close=(event:KeyboardEvent)=>{if(event.key!=='Escape'||event.isComposing)return;event.preventDefault();event.stopImmediatePropagation();if(editing)setEditing(null);else if(newDialog)setNewDialog(false);else if(help)setHelp(false);else setUpdateDialog(false);};window.addEventListener('keydown',close,true);return()=>window.removeEventListener('keydown',close,true);},[editing,newDialog,help,updateDialog]);
@@ -484,7 +486,7 @@ function Editor({initial,writer}:{initial:LocalRestore;writer:'active'|'waiting'
   {writer==='unavailable'&&<div className="writer-notice" role="status">{t("無法確認其他視窗的編輯權，因此本視窗以唯讀方式開啟。請使用已開啟的 OpenMind 視窗編輯，或匯出副本。")}</div>}
   {presentation && <Presentation sheet={sheet} title={book.title} readOnly={readOnly} edit={fn=>edit((b,s)=>{if(b.id!==book.id||s.id!==sheet.id)throw new Error(t("操作時已切換文件，請重新選取。"));fn(s);})} onClose={()=>setPresentation(false)} notify={notify}/>}
   {print && <PrintStudio sheet={sheet} selected={primary.id} title={book.title} onClose={() => setPrint(false)} notify={notify}/>}
-  {updateDialog&&<div className="modal-backdrop" onClick={()=>setUpdateDialog(false)}><div className="update-dialog" role="dialog" aria-modal="true" aria-label={t("軟體更新")} onClick={event=>event.stopPropagation()}><div className="dialog-heading"><div><span className="eyebrow">{t("OPENMIND UPDATE")}</span><h2>{t("軟體更新")}</h2></div><button aria-label={t("關閉更新視窗")} onClick={()=>setUpdateDialog(false)}><X size={19}/></button></div><p className="update-message" role="status" aria-live="polite">{updateMessage(updateStatus)}</p>{updateStatus.phase==='downloading'&&<progress className="update-progress" max={100} value={updateStatus.progress??0}/>}<div className="dialog-footer"><small>{t("目前版本 ")}{updateStatus.currentVersion}</small>{updateStatus.phase==='downloaded'?<button className="primary" onClick={()=>void window.openmind?.installUpdate()}><Download size={15}/>{t("重新啟動並安裝")}</button>:<button onClick={()=>void openUpdateDialog()} disabled={['checking','downloading','installing'].includes(updateStatus.phase)}>{t("重新檢查")}</button>}</div></div></div>}
+  {updateDialog&&<div className="modal-backdrop" onClick={()=>setUpdateDialog(false)}><div className="update-dialog" role="dialog" aria-modal="true" aria-label={t("軟體更新")} onClick={event=>event.stopPropagation()}><div className="dialog-heading"><div><span className="eyebrow">{t("OPENMIND UPDATE")}</span><h2>{t("軟體更新")}</h2></div><button aria-label={t("關閉更新視窗")} onClick={()=>setUpdateDialog(false)}><X size={19}/></button></div><p className="update-message" role="status" aria-live="polite">{updateMessage(updateStatus)}</p>{updateStatus.phase==='downloading'&&<progress className="update-progress" aria-label={t("正在下載更新…")}/>}<div className="dialog-footer"><small>{t("目前版本 ")}{updateStatus.currentVersion}</small>{updateStatus.phase==='manual'?<button className="primary" disabled={!updateStatus.releasesUrl} onClick={()=>void openUpdateDownload()}><Download size={15}/>{t("開啟下載頁面")}</button>:updateStatus.phase==='downloaded'?<button className="primary" onClick={()=>void window.openmind?.installUpdate()}><Download size={15}/>{t("重新啟動並安裝")}</button>:<button onClick={()=>void openUpdateDialog()} disabled={['checking','downloading','installing'].includes(updateStatus.phase)}>{t("重新檢查")}</button>}</div></div></div>}
   {toast && <div className="toast" role="status"><span>{t(toast)}</span><button aria-label={t("關閉通知")} onClick={() => setToast('')}><X size={15}/></button></div>}
  </div>;
 }

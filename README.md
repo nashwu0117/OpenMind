@@ -22,13 +22,14 @@ OpenMind 是專注於內容清晰度與列印品質的桌面心智圖工具。�
 
 ## 下載與安裝
 
-[下載 0.3.2 DMG（Apple Silicon／M 系列 Mac）](https://github.com/nashwu0117/OpenMind/releases/download/preview-0.3.2/OpenMind-darwin-arm64-0.3.2.dmg) · [ZIP 與版本說明](https://github.com/nashwu0117/OpenMind/releases/tag/preview-0.3.2)。本次預覽版僅提供 `arm64`，不適用於 Intel Mac。打開 DMG，將 OpenMind 拖到「Applications／應用程式」資料夾，再從應用程式資料夾開啟。
+[下載 0.3.3 DMG（Apple Silicon／M 系列 Mac）](https://github.com/nashwu0117/OpenMind/releases/download/preview-0.3.3/OpenMind-darwin-arm64-0.3.3.dmg) · [ZIP 與版本說明](https://github.com/nashwu0117/OpenMind/releases/tag/preview-0.3.3)。本次預覽版僅提供 `arm64`，不適用於 Intel Mac。打開 DMG，將 OpenMind 拖到「Applications／應用程式」資料夾，再從應用程式資料夾開啟。
 
 目前的 macOS 預覽版使用 ad-hoc 簽章，尚未經 Apple 公證；不需要 Apple Developer ID 憑證。首次開啟時系統可能會阻擋。確認下載來源是本專案的 GitHub Release 後，可在「系統設定 → 隱私權與安全性 → 仍要打開」為 OpenMind 個別允許；不需要整體停用 Gatekeeper。
 
 ## 為什麼使用 OpenMind
 
 - **專注整理想法：** 九種圖表結構、自由主題、多層分支、同步大綱、搜尋、任務時間軸與簡報模式。
+- **資料夾分類：** 從資料庫管理心智圖，按右鍵或點選卡片的 ⋯ 可重新命名、建立副本與移動資料夾；開啟後進入獨立編輯頁。
 - **列印後仍然可讀：** 六種分頁策略、繁中字型內嵌 PDF、跨頁關係提示與列印前預覽。
 - **資料留在本機：** 不需要帳號；文件以本機檔案或瀏覽器本機儲存管理。應用程式不含廣告或遙測。
 - **方便攜出：** 支援 `.openmind` 原生文件，並提供 Markdown、OPML 與 FreeMind 子集匯入匯出，以及 SVG／PNG 圖片輸出。
@@ -36,7 +37,7 @@ OpenMind 是專注於內容清晰度與列印品質的桌面心智圖工具。�
 
 ## 更新
 
-本次預覽版請從 [GitHub Releases](https://github.com/nashwu0117/OpenMind/releases) 手動下載更新；升級前先另存 `.openmind` 備份。桌面版雖提供手動檢查更新的入口，但更新服務會忽略預覽版。下載、簽署驗證、安裝與重新啟動的完整流程，仍須在 Developer ID 簽署的公開版本完成端對端驗收。
+本次預覽版請從 [GitHub Releases](https://github.com/nashwu0117/OpenMind/releases) 手動下載更新；升級前先另存 `.openmind` 備份。0.3.3 的「更新」視窗會說明手動更新方式，並提供開啟下載頁面的按鈕。0.3.2 仍可能顯示誤導的「網路失敗」，請直接使用上方下載連結。下載、簽署驗證、安裝與重新啟動的自動更新流程，仍須在 Developer ID 簽署的公開版本完成端對端驗收。
 
 ## 從原始碼執行
 

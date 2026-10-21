@@ -34,9 +34,9 @@ function setApplicationMenu(locale='zh-TW'){
 if(!ownsSingleInstance)app.quit();
 else app.whenReady().then(async()=>{
  session.defaultSession.setPermissionRequestHandler((_wc,_p,cb)=>cb(false));session.defaultSession.setPermissionCheckHandler(()=>false);
- let repository='';try{const updateConfig=JSON.parse(await fs.readFile(path.join(process.resourcesPath,'openmind-update.json'),'utf8'));if(typeof updateConfig.repository==='string')repository=updateConfig.repository;}catch{}
+ let repository='',channel='preview';try{const updateConfig=JSON.parse(await fs.readFile(path.join(process.resourcesPath,'openmind-update.json'),'utf8'));if(typeof updateConfig.repository==='string')repository=updateConfig.repository;if(updateConfig.channel!==undefined)channel=updateConfig.channel;}catch{}
  main=new BrowserWindow({width:1480,height:960,minWidth:960,minHeight:640,title:'OpenMind',backgroundColor:'#f6f8fb',webPreferences:{preload:path.join(__dirname,'preload.cjs'),nodeIntegration:false,contextIsolation:true,sandbox:true}});
- updater=createUpdater({app,autoUpdater,repository,onState:state=>{if(main&&!main.isDestroyed())main.webContents.send('updates:state',state);}});
+ updater=createUpdater({app,autoUpdater,repository,channel,onState:state=>{if(main&&!main.isDestroyed())main.webContents.send('updates:state',state);}});
  main.webContents.setWindowOpenHandler(()=>({action:'deny'}));main.webContents.on('will-navigate',e=>e.preventDefault());
  main.loadFile(path.join(__dirname,'../dist/index.html'));
  ipcMain.handle('link:open',async(event,url)=>{trusted(event);const parsed=new URL(validText(url,2000));if(!['https:','http:','mailto:'].includes(parsed.protocol)||parsed.username||parsed.password)throw new Error('不允許的外部連結。');await shell.openExternal(parsed.href);});

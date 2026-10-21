@@ -78,13 +78,18 @@ Object.assign(english, {
   '自動更新僅適用於正式簽署的 macOS 版本。': 'Automatic updates are only available in officially signed macOS releases.',
   '此版本尚未設定更新來源。': 'No update source is configured for this build.',
   '此版本尚未設定有效的 GitHub 更新來源。': 'No valid GitHub update source is configured for this build.',
+  '預覽版採用手動更新，請開啟下載頁面取得新版，再拖曳至「應用程式」取代舊版。': 'Preview builds use manual updates. Open the download page to get a newer build, then drag it into Applications to replace the previous version.',
+  '開啟下載頁面': 'Open Download Page',
+  '無法開啟下載頁面，請稍後再試。': 'Could not open the download page. Try again later.',
   '正在檢查更新…': 'Checking for updates…',
   '正在下載更新…': 'Downloading update…',
   '正在下載 {0}…': 'Downloading {0}…',
   '目前已是最新版本（{0}）。': 'Already up to date: {0}.',
   'OpenMind {0} 已下載完成。': 'OpenMind {0} has finished downloading.',
+  '更新已下載完成，可重新啟動並安裝。': 'The update has finished downloading. Restart to install it.',
   '正在重新啟動並安裝更新…': 'Restarting and installing the update…',
-  '更新失敗，請檢查網路連線後再試一次。': 'The update failed. Check your network connection and try again.',
+  '更新失敗，請稍後再試。': 'The update failed. Try again later.',
+  '目前尚無可用的正式更新，請稍後再試。': 'No official update is available yet. Try again later.',
   '無法初始化更新服務。': 'Could not initialize the update service.'
 });
 
@@ -179,13 +184,18 @@ Object.assign(chinese, {
   'Automatic updates are only available in officially signed macOS releases.': '自動更新僅適用於正式簽署的 macOS 版本。',
   'No update source is configured for this build.': '此版本尚未設定更新來源。',
   'No valid GitHub update source is configured for this build.': '此版本尚未設定有效的 GitHub 更新來源。',
+  'Preview builds use manual updates. Open the download page to get a newer build, then drag it into Applications to replace the previous version.': '預覽版採用手動更新，請開啟下載頁面取得新版，再拖曳至「應用程式」取代舊版。',
+  'Open Download Page': '開啟下載頁面',
+  'Could not open the download page. Try again later.': '無法開啟下載頁面，請稍後再試。',
   'Checking for updates…': '正在檢查更新…',
   'Downloading update…': '正在下載更新…',
   'Downloading {0}…': '正在下載 {0}…',
   'Already up to date: {0}.': '目前已是最新版本（{0}）。',
   'OpenMind {0} has finished downloading.': 'OpenMind {0} 已下載完成。',
+  'The update has finished downloading. Restart to install it.': '更新已下載完成，可重新啟動並安裝。',
   'Restarting and installing the update…': '正在重新啟動並安裝更新…',
-  'The update failed. Check your network connection and try again.': '更新失敗，請檢查網路連線後再試一次。',
+  'The update failed. Try again later.': '更新失敗，請稍後再試。',
+  'No official update is available yet. Try again later.': '目前尚無可用的正式更新，請稍後再試。',
   'Could not initialize the update service.': '無法初始化更新服務。'
 });
 

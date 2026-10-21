@@ -2,13 +2,13 @@
 
 [繁體中文](RELEASING.md) · [English](RELEASING.en.md)
 
-目前提供 [0.3.2 Apple Silicon 預覽版](https://github.com/nashwu0117/OpenMind/releases/tag/preview-0.3.2)：DMG 拖移安裝檔、app ZIP 與 `SHA256SUMS.txt`。這是經本機驗收的 ad-hoc 簽署版本，尚未經 Apple 公證；首次開啟可能需要在「系統設定 → 隱私權與安全性 → 仍要打開」個別允許 OpenMind。不要整體停用 Gatekeeper。
+目前提供 [0.3.3 Apple Silicon 預覽版](https://github.com/nashwu0117/OpenMind/releases/tag/preview-0.3.3)：DMG 拖移安裝檔、app ZIP 與 `SHA256SUMS.txt`。這是經本機驗收的 ad-hoc 簽署版本，尚未經 Apple 公證；首次開啟可能需要在「系統設定 → 隱私權與安全性 → 仍要打開」個別允許 OpenMind。不要整體停用 Gatekeeper。
 
 ## 手動預覽版
 
-預覽版使用 `preview-<版號>` tag，並在 GitHub 標記為 prerelease；不會進入下方的 Developer ID `v*` 發行流程，也不會由應用程式內更新服務自動安裝。0.3.2 只驗收 macOS arm64，沒有 Intel 或通用版本。
+預覽版使用 `preview-<版號>` tag，並在 GitHub 標記為 prerelease；不會進入下方的 Developer ID `v*` 發行流程，也不會由應用程式內更新服務自動安裝。0.3.3 的更新視窗提供手動下載入口，不會呼叫原生更新服務。此預覽版只驗收 macOS arm64，沒有 Intel 或通用版本。
 
-在 macOS arm64 上執行 `OPENMIND_UPDATE_REPOSITORY=nashwu0117/OpenMind npm run package`，再執行 `node scripts/make-dmg.mjs`。腳本不會覆寫既有輸出。發布前必須對封裝 app 執行桌面冒煙測試、驗證巢狀簽章、掛載 DMG 並測試安裝副本；為 DMG 與 ZIP 產生 SHA-256 清單，將同一批檔案附加到預覽 Release。簽章完整性不代表 Apple 已驗證開發者身分或公證通過。
+在 macOS arm64 上執行 `OPENMIND_UPDATE_REPOSITORY=nashwu0117/OpenMind OPENMIND_UPDATE_CHANNEL=preview npm run package`，再執行 `node scripts/make-dmg.mjs`。本機封裝預設為 preview；正式簽署 workflow 必須明確指定 `OPENMIND_UPDATE_CHANNEL=stable`。腳本不會覆寫既有輸出。發布前必須對封裝 app 執行桌面冒煙測試、驗證巢狀簽章、掛載 DMG 並測試安裝副本；為 DMG 與 ZIP 產生 SHA-256 清單，將同一批檔案附加到預覽 Release。簽章完整性不代表 Apple 已驗證開發者身分或公證通過。
 
 下方是未來正式發行的設定。正式版目標為 Apple Silicon (`arm64`) 與 Intel (`x64`) Mac，各提供 Developer ID 簽署且已公證的 DMG 和更新 ZIP。
 
@@ -38,6 +38,6 @@
 
 ## 隱私與目前限制
 
-應用程式只在使用者主動檢查時連線 Electron 公開更新服務，服務再查詢 GitHub Releases。更新請求包含目前版號與架構，伺服器會收到一般網路連線資訊；心智圖文件、附件及本機路徑不會送出。離線時編輯和列印仍可使用，但無法檢查或下載更新。
+預覽版不會呼叫原生更新服務，只有使用者點選下載按鈕時才會開啟 GitHub Releases。正式版只在使用者主動檢查時連線 Electron 公開更新服務，服務再查詢 GitHub Releases。正式版更新請求包含目前版號與架構，伺服器會收到一般網路連線資訊；心智圖文件、附件及本機路徑不會送出。離線時編輯和列印仍可使用，但無法下載更新。
 
 公開原始碼 repository 與 Apple Silicon 預覽版下載可用，GitHub 私下漏洞回報功能已啟用。Apple Developer 憑證、Notary API key 和乾淨 Mac 測試環境仍未設定；簽署與公證發行 workflow 尚未完成，也沒有已公證的安裝器或真實版本更新往返驗收。預覽版的本機安裝測試不能代表乾淨 Mac 的 Gatekeeper 驗收。詳見[發布準備報告](RELEASE_READINESS.md)。

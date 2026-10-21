@@ -1,9 +1,9 @@
 export {};
 export type UpdateStatus = {
-    phase: 'idle' | 'unsupported' | 'unavailable' | 'checking' | 'current' | 'downloading' | 'downloaded' | 'installing' | 'error';
+    phase: 'idle' | 'unsupported' | 'unavailable' | 'manual' | 'checking' | 'current' | 'downloading' | 'downloaded' | 'installing' | 'error';
     currentVersion: string;
     availableVersion?: string;
-    progress?: number;
+    releasesUrl?: string;
     message: string;
 };
 declare global {
